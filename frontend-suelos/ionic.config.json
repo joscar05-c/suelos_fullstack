@@ -1,0 +1,7 @@
+{
+  "name": "frontend-suelos",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}

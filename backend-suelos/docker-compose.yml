@@ -1,0 +1,21 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:15
+    container_name: db_suelos
+    # Esto le dice a Docker que lea tu archivo .env
+    env_file:
+      - .env
+    environment:
+      # Lado Izquierdo: Lo que pide Postgres
+      # Lado Derecho: La variable que tienes en tu .env
+      POSTGRES_USER: ${DB_USERNAME}      # Usará 'suelos_user'
+      POSTGRES_PASSWORD: ${DB_PASSWORD}  # Usará 'verano8080'
+      POSTGRES_DB: ${DB_DATABASE}        # Usará 'suelos_db'
+    ports:
+      - "${DB_PORT}:5432"                # Usará 5432:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
