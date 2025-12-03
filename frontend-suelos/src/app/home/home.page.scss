@@ -1,27 +1,18 @@
-#container {
-  text-align: center;
+// Estilos para la página de calculadora de suelos
 
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
+ion-card {
+  margin-bottom: 16px;
 }
 
-#container strong {
-  font-size: 20px;
-  line-height: 26px;
+ion-chip {
+  margin: 4px;
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  white-space: normal;
+  height: auto;
+  min-height: 32px;
 }
 
-#container p {
-  font-size: 16px;
-  line-height: 22px;
-
-  color: #8c8c8c;
-
-  margin: 0;
-}
-
-#container a {
-  text-decoration: none;
+.ion-margin-top {
+  margin-top: 20px;
 }

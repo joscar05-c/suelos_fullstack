@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { SolicitudCalculo, RespuestaCalculo } from '../interfaces/suelo.interface';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -9,10 +10,48 @@ import { SolicitudCalculo, RespuestaCalculo } from '../interfaces/suelo.interfac
 export class SueloService {
   private http = inject(HttpClient);
 
-  // Asegúrate de que esta URL coincida con tu backend local o VPS
-  private apiUrl = 'http://localhost:3000/calculo-suelo/calcular-nutrientes';
+  // URL base desde variables de entorno
+  private apiUrl = `${environment.apiUrl}/calculo-suelo/calcular-nutrientes`;
+  private catalogoUrl = `${environment.apiUrl}/catalogo`;
 
   calcularNutrientes(datos: SolicitudCalculo): Observable<RespuestaCalculo> {
     return this.http.post<RespuestaCalculo>(this.apiUrl, datos);
+  }
+
+  getTexturas(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.catalogoUrl}/texturas`);
+  }
+
+  getZonas(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.catalogoUrl}/zonas`);
+  }
+
+  // ============================================
+  // MÉTODOS FILTRADOS CON INTELIGENCIA AGRONÓMICA
+  // ============================================
+  
+  // Fertilizantes ricos en Nitrógeno (N > 9%)
+  getFertilizantesNitrogeno(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.catalogoUrl}/fertilizantes/nitrogeno`);
+  }
+
+  // Fertilizantes ricos en Fósforo (P2O5 > 5%)
+  getFertilizantesFosforo(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.catalogoUrl}/fertilizantes/fosforo`);
+  }
+
+  // Fertilizantes ricos en Potasio (K2O > 15%) - SIN GUANO
+  getFertilizantesPotasio(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.catalogoUrl}/fertilizantes/potasio`);
+  }
+
+  // Enmiendas cálcicas (CaO > 20% o clasificación ENMIENDA)
+  getEnmiendas(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.catalogoUrl}/fertilizantes/enmienda`);
+  }
+
+  // Método original sin filtros (por compatibilidad)
+  getFertilizantes(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.catalogoUrl}/fertilizantes`);
   }
 }

@@ -63,14 +63,132 @@
       </ion-card-content>
     </ion-card>
 
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Propiedades Químicas</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+
+        <ion-item>
+          <ion-label position="stacked">pH</ion-label>
+          <ion-input type="number" formControlName="ph" placeholder="Ej: 5.5"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">Conductividad Eléctrica (dS/m)</ion-label>
+          <ion-input type="number" formControlName="ce" placeholder="Ej: 0.5"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">Calcio Intercambiable (meq/100g)</ion-label>
+          <ion-input type="number" formControlName="caIntercambiable" placeholder="Ej: 8.0"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">Magnesio Intercambiable (meq/100g)</ion-label>
+          <ion-input type="number" formControlName="mgIntercambiable" placeholder="Ej: 2.5"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">Potasio Intercambiable (meq/100g)</ion-label>
+          <ion-input type="number" formControlName="kIntercambiable" placeholder="Ej: 0.3"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">Sodio Intercambiable (meq/100g)</ion-label>
+          <ion-input type="number" formControlName="naIntercambiable" placeholder="Ej: 0.2"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">Acidez Intercambiable - Al+H (meq/100g)</ion-label>
+          <ion-input type="number" formControlName="acidezIntercambiable" placeholder="Ej: 2.0"></ion-input>
+        </ion-item>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Micronutrientes (Opcionales)</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+
+        <ion-item>
+          <ion-label position="stacked">Boro - B (ppm)</ion-label>
+          <ion-input type="number" formControlName="b_ppm" placeholder="Ej: 0.5"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">Cobre - Cu (ppm)</ion-label>
+          <ion-input type="number" formControlName="cu_ppm" placeholder="Ej: 2.0"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">Zinc - Zn (ppm)</ion-label>
+          <ion-input type="number" formControlName="zn_ppm" placeholder="Ej: 3.0"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">Manganeso - Mn (ppm)</ion-label>
+          <ion-input type="number" formControlName="mn_ppm" placeholder="Ej: 10.0"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">Hierro - Fe (ppm)</ion-label>
+          <ion-input type="number" formControlName="fe_ppm" placeholder="Ej: 50.0"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">Azufre - S (ppm)</ion-label>
+          <ion-input type="number" formControlName="s_ppm" placeholder="Opcional (Ej: 5.0)"></ion-input>
+          <ion-note slot="helper">Dejar vacío si el laboratorio no lo reporta (se asumirá 0)</ion-note>
+        </ion-item>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Objetivo de Producción</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+
+        <ion-item>
+          <ion-label position="stacked">Meta de Rendimiento (qq/ha)</ion-label>
+          <ion-input type="number" formControlName="metaRendimiento" placeholder="20, 30, 40, 50 o 60"></ion-input>
+        </ion-item>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Estrategia de Fertilización</ion-card-title>
+        <ion-card-subtitle>Elige tus productos comerciales</ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+
+        <ion-item>
+          <ion-label position="stacked">Fuente de Nitrógeno (N)</ion-label>
+          <ion-select formControlName="idFuenteN" placeholder="Seleccione...">
+            <ion-select-option *ngFor="let f of listaNitrogeno" [value]="f.id">{{ f.nombre }}</ion-select-option>
+          </ion-select>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">Fuente de Fósforo (P)</ion-label>
+          <ion-select formControlName="idFuenteP" placeholder="Seleccione...">
+            <ion-select-option *ngFor="let f of listaFosforo" [value]="f.id">{{ f.nombre }}</ion-select-option>
+          </ion-select>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">Fuente de Potasio (K)</ion-label>
+          <ion-select formControlName="idFuenteK" placeholder="Seleccione...">
+            <ion-select-option *ngFor="let f of listaPotasio" [value]="f.id">{{ f.nombre }}</ion-select-option>
+          </ion-select>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">Fuente de Enmienda (Ca/Mg)</ion-label>
+          <ion-select formControlName="idFuenteCa" placeholder="Seleccione...">
+            <ion-select-option *ngFor="let e of listaEnmiendas" [value]="e.id">{{ e.nombre }}</ion-select-option>
+          </ion-select>
+        </ion-item>
+      </ion-card-content>
+    </ion-card>
+
     <ion-button expand="block" type="submit" size="large" class="ion-margin-top">
-      Calcular Disponibilidad
+      Calcular Análisis Completo
     </ion-button>
   </form>
 
   <ion-card *ngIf="resultado" color="light" class="ion-margin-top">
     <ion-card-header>
-      <ion-card-title>Resultados</ion-card-title>
+      <ion-card-title>Resultados - Nutrientes Disponibles</ion-card-title>
     </ion-card-header>
     <ion-card-content>
       <ion-list>
@@ -103,6 +221,486 @@
           </div>
         </ion-item>
       </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- NUTRIENTES SECUNDARIOS DISPONIBLES -->
+  <ion-card *ngIf="resultado" color="light" class="ion-margin-top">
+    <ion-card-header>
+      <ion-card-title>Nutrientes Secundarios Disponibles</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item>
+          <ion-label>
+            <h2>Magnesio (MgO)</h2>
+            <p>Disponible</p>
+          </ion-label>
+          <div slot="end" style="font-size: 1.2rem; font-weight: bold; color: #9c27b0;">
+            {{ resultado.magnesioDisponibleKg | number:'1.3-3' }} kg/ha
+          </div>
+        </ion-item>
+        <ion-item>
+          <ion-label>
+            <h2>Azufre (S)</h2>
+            <p>Disponible</p>
+          </ion-label>
+          <div slot="end" style="font-size: 1.2rem; font-weight: bold; color: #ffc107;">
+            {{ resultado.azufreDisponibleKg | number:'1.3-3' }} kg/ha
+          </div>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card *ngIf="resultado" color="light" class="ion-margin-top">
+    <ion-card-header>
+      <ion-card-title>Interpretación Química del Suelo</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+
+        <ion-item>
+          <ion-label>
+            <h2>CIC Efectiva</h2>
+            <p>Capacidad de Intercambio Catiónico</p>
+          </ion-label>
+          <div slot="end" style="font-size: 1.2rem; font-weight: bold; color: var(--ion-color-success);">
+            {{ resultado.cicEfectiva | number:'1.3-3' }} meq/100g
+          </div>
+        </ion-item>
+
+        <ion-item>
+          <ion-label>
+            <h2>Suma de Bases</h2>
+            <p>Ca + Mg + K + Na</p>
+          </ion-label>
+          <div slot="end" style="font-size: 1.2rem; font-weight: bold; color: var(--ion-color-secondary);">
+            {{ resultado.sumaBases | number:'1.3-3' }} meq/100g
+          </div>
+        </ion-item>
+
+        <ion-item>
+          <ion-label>
+            <h2>Saturación de Acidez</h2>
+            <p>Porcentaje de acidez intercambiable</p>
+          </ion-label>
+          <div slot="end" style="font-size: 1.2rem; font-weight: bold; color: var(--ion-color-danger);">
+            {{ resultado.porcentajeSatAcidez | number:'1.2-2' }} %
+          </div>
+        </ion-item>
+
+        <ion-item>
+          <ion-label>
+            <h2>Saturación de Bases</h2>
+            <p>Porcentaje de bases intercambiables</p>
+          </ion-label>
+          <div slot="end" style="font-size: 1.2rem; font-weight: bold; color: var(--ion-color-success);">
+            {{ resultado.porcentajeSatBases | number:'1.2-2' }} %
+          </div>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card *ngIf="resultado && resultado.equilibrioCationico" color="light" class="ion-margin-top">
+    <ion-card-header>
+      <ion-card-title>⚖️ Equilibrio Catiónico (Relaciones Ca/Mg/K)</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+
+        <ion-item>
+          <ion-label>
+            <h2>Relación Ca/Mg</h2>
+            <p>Calcio / Magnesio (Ideal: 5.0-8.0)</p>
+          </ion-label>
+          <div slot="end" style="font-size: 1.2rem; font-weight: bold; color: var(--ion-color-primary);">
+            {{ resultado.equilibrioCationico.ca_mg | number:'1.3-3' }}
+          </div>
+        </ion-item>
+
+        <ion-item>
+          <ion-label>
+            <h2>Relación Ca/K</h2>
+            <p>Calcio / Potasio (Ideal: 14.0-16.0)</p>
+          </ion-label>
+          <div slot="end" style="font-size: 1.2rem; font-weight: bold; color: var(--ion-color-secondary);">
+            {{ resultado.equilibrioCationico.ca_k | number:'1.3-3' }}
+          </div>
+        </ion-item>
+
+        <ion-item>
+          <ion-label>
+            <h2>Relación Mg/K</h2>
+            <p>Magnesio / Potasio (Ideal: 1.8-2.5)</p>
+          </ion-label>
+          <div slot="end" style="font-size: 1.2rem; font-weight: bold; color: var(--ion-color-tertiary);">
+            {{ resultado.equilibrioCationico.mg_k | number:'1.3-3' }}
+          </div>
+        </ion-item>
+
+        <ion-item>
+          <ion-label>
+            <h2>Relación K/Mg</h2>
+            <p>Potasio / Magnesio (Ideal: 0.2-0.3)</p>
+          </ion-label>
+          <div slot="end" style="font-size: 1.2rem; font-weight: bold; color: var(--ion-color-warning);">
+            {{ resultado.equilibrioCationico.k_mg | number:'1.3-3' }}
+          </div>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card *ngIf="resultado && resultado.balanceNutricional" color="success" class="ion-margin-top">
+    <ion-card-header>
+      <ion-card-title>Balance Nutricional (Meta: {{ resultado.balanceNutricional.metaQuintales }} qq/ha)</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <!-- NITRÓGENO -->
+        <ion-item>
+          <ion-label>
+            <h2><strong>Nitrógeno (N)</strong></h2>
+            <p>Requerido: {{ resultado.balanceNutricional.N.requerido | number:'1.3-3' }} kg/ha</p>
+            <p>Suministro del Suelo: {{ resultado.balanceNutricional.N.suministroSuelo | number:'1.3-3' }} kg/ha</p>
+          </ion-label>
+          <div slot="end" style="font-size: 1.1rem; font-weight: bold;"
+               [style.color]="resultado.balanceNutricional.N.deficit === 0 ? 'var(--ion-color-success)' : 'var(--ion-color-danger)'">
+            Déficit: {{ resultado.balanceNutricional.N.deficit | number:'1.3-3' }} kg/ha
+          </div>
+        </ion-item>
+
+        <!-- FÓSFORO -->
+        <ion-item>
+          <ion-label>
+            <h2><strong>Fósforo (P2O5)</strong></h2>
+            <p>Requerido: {{ resultado.balanceNutricional.P2O5.requerido | number:'1.3-3' }} kg/ha</p>
+            <p>Suministro del Suelo: {{ resultado.balanceNutricional.P2O5.suministroSuelo | number:'1.3-3' }} kg/ha</p>
+          </ion-label>
+          <div slot="end" style="font-size: 1.1rem; font-weight: bold;"
+               [style.color]="resultado.balanceNutricional.P2O5.deficit === 0 ? 'var(--ion-color-success)' : 'var(--ion-color-danger)'">
+            Déficit: {{ resultado.balanceNutricional.P2O5.deficit | number:'1.3-3' }} kg/ha
+          </div>
+        </ion-item>
+
+        <!-- POTASIO -->
+        <ion-item>
+          <ion-label>
+            <h2><strong>Potasio (K2O)</strong></h2>
+            <p>Requerido: {{ resultado.balanceNutricional.K2O.requerido | number:'1.3-3' }} kg/ha</p>
+            <p>Suministro del Suelo: {{ resultado.balanceNutricional.K2O.suministroSuelo | number:'1.3-3' }} kg/ha</p>
+          </ion-label>
+          <div slot="end" style="font-size: 1.1rem; font-weight: bold;"
+               [style.color]="resultado.balanceNutricional.K2O.deficit === 0 ? 'var(--ion-color-success)' : 'var(--ion-color-danger)'">
+            Déficit: {{ resultado.balanceNutricional.K2O.deficit | number:'1.3-3' }} kg/ha
+          </div>
+        </ion-item>
+
+        <!-- MAGNESIO (Opcional) -->
+        <ion-item *ngIf="resultado.balanceNutricional.MgO">
+          <ion-label>
+            <h2><strong>Magnesio (MgO)</strong></h2>
+            <p>Requerido: {{ resultado.balanceNutricional.MgO.requerido | number:'1.3-3' }} kg/ha</p>
+            <p>Suministro del Suelo: {{ resultado.balanceNutricional.MgO.suministroSuelo | number:'1.3-3' }} kg/ha</p>
+          </ion-label>
+          <div slot="end" style="font-size: 1.1rem; font-weight: bold;"
+               [style.color]="resultado.balanceNutricional.MgO.deficit === 0 ? 'var(--ion-color-success)' : '#9c27b0'">
+            Déficit: {{ resultado.balanceNutricional.MgO.deficit | number:'1.3-3' }} kg/ha
+          </div>
+        </ion-item>
+
+        <!-- AZUFRE (Opcional) -->
+        <ion-item *ngIf="resultado.balanceNutricional.S">
+          <ion-label>
+            <h2><strong>Azufre (S)</strong></h2>
+            <p>Requerido: {{ resultado.balanceNutricional.S.requerido | number:'1.3-3' }} kg/ha</p>
+            <p>Suministro del Suelo: {{ resultado.balanceNutricional.S.suministroSuelo | number:'1.3-3' }} kg/ha</p>
+          </ion-label>
+          <div slot="end" style="font-size: 1.1rem; font-weight: bold;"
+               [style.color]="resultado.balanceNutricional.S.deficit === 0 ? 'var(--ion-color-success)' : '#ffc107'">
+            Déficit: {{ resultado.balanceNutricional.S.deficit | number:'1.3-3' }} kg/ha
+          </div>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card *ngIf="resultado && resultado.micronutrientes" color="light" class="ion-margin-top">
+    <ion-card-header>
+      <ion-card-title>🔬 Diagnóstico de Micronutrientes</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item *ngFor="let elemento of getKeys(resultado.micronutrientes)">
+          <ion-label>
+            <h2><strong>{{ elemento }}</strong> ({{ resultado.micronutrientes![elemento].valor }} ppm)</h2>
+            <p style="margin-top: 4px;">
+              <ion-chip
+                [color]="resultado.micronutrientes![elemento].diagnostico === 'SUFICIENTE' ? 'success' : 'danger'"
+                style="margin: 0;">
+                {{ resultado.micronutrientes![elemento].diagnostico }}
+              </ion-chip>
+            </p>
+            <p style="margin-top: 8px; font-size: 0.9rem; color: var(--ion-color-medium);">
+              {{ resultado.micronutrientes![elemento].recomendacion }}
+            </p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- TARJETA DE ENMIENDA CÁLCICA -->
+  <ion-card *ngIf="resultado && resultado.enmienda_calcica && resultado.enmienda_calcica.requiere_enmienda" class="ion-margin-top" style="border-left: 5px solid #eb445a;">
+    <ion-card-header color="light">
+      <ion-card-title style="color: #eb445a; display: flex; align-items: center;">
+        <ion-icon name="warning-outline" style="margin-right: 8px;"></ion-icon>
+        Requerimiento de Enmienda
+      </ion-card-title>
+      <ion-card-subtitle>Corrección de Acidez y Calcio</ion-card-subtitle>
+    </ion-card-header>
+
+    <ion-card-content>
+      <ion-list lines="none">
+        <ion-item>
+          <ion-label class="ion-text-wrap">
+            <p><strong>Relación Ca/Mg:</strong> {{ resultado.enmienda_calcica.relacion_ca_mg }} (Ideal: ≥ 5.0)</p>
+            <p><strong>Producto:</strong> {{ resultado.enmienda_calcica.producto }}</p>
+            <p *ngIf="resultado.enmienda_calcica.riqueza_cao"><strong>Riqueza:</strong> {{ resultado.enmienda_calcica.riqueza_cao }}</p>
+            <p style="margin-top:5px; font-size: 0.9em; color: #666;">
+              <em>*Aplicar la enmienda según recomendación técnica.</em>
+            </p>
+
+            <div style="display: flex; gap: 10px; margin-top: 15px; align-items: center; justify-content: center;">
+              <div style="background-color: #ffebee; color: #c62828; padding: 10px 15px; border-radius: 8px; text-align: center;">
+                <div style="font-size: 0.8em;">Dosis</div>
+                <div style="font-weight: bold; font-size: 1.2em;">
+                  {{ resultado.enmienda_calcica.kg_comercial_ha | number:'1.1-1' }} kg/ha
+                </div>
+              </div>
+
+              <span style="font-weight: bold; color: #999;">=</span>
+
+              <div style="background-color: #fff9c4; color: #f9a825; padding: 10px 15px; border-radius: 8px; text-align: center;">
+                <div style="font-size: 0.8em;">Sacos (50kg)</div>
+                <div style="font-weight: bold; font-size: 1.2em;">
+                  {{ resultado.enmienda_calcica.sacos_50kg | number:'1.1-1' }}
+                </div>
+              </div>
+            </div>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card *ngIf="resultado && resultado.recomendacion_fertilizacion" color="primary" class="ion-margin-top">
+    <ion-card-header>
+      <ion-card-title>🛒 Recomendación de Fertilización Comercial (Algoritmo en Cascada)</ion-card-title>
+      <ion-card-subtitle>Sistema Dinámico de Nutrientes</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+
+        <!-- 🚀 CASCADA VISUAL DINÁMICA: Itera sobre todos los nutrientes (NPK + Mg + S) -->
+        <ng-container *ngFor="let nutriente of getNutrientesCascada(); let i = index">
+
+          <!-- CASO 1: Nutriente con cantidad mayor a 0 (MOSTRAR RECOMENDACIÓN) -->
+          <ion-item
+            *ngIf="nutriente.data.cantidad_kg_ha > 0"
+            [lines]="i < getNutrientesCascada().length - 1 ? 'full' : 'none'"
+            [style.border-top]="nutriente.tipo === 'secundario' ? '2px solid ' + nutriente.borderColor : 'none'"
+            [style.margin-top]="nutriente.tipo === 'secundario' ? '15px' : '0'"
+            [style.padding-top]="nutriente.tipo === 'secundario' ? '10px' : '0'">
+            <ion-label>
+              <h2>
+                <strong>{{ nutriente.numero }} {{ nutriente.data.producto }}</strong>
+                <ion-chip *ngIf="nutriente.tipo === 'secundario'" color="medium" style="margin-left: 8px; font-size: 0.7em;">
+                  Secundario
+                </ion-chip>
+              </h2>
+
+              <!-- Bloque de ahorro inteligente (solo para Nitrógeno) -->
+              <div *ngIf="nutriente.key === 'Nitrogeno' && nutriente.data.aporte_de_otros_fertilizantes > 0"
+                   style="font-size: 0.9em; color: #2f7d32; background-color: #e8f5e9; padding: 5px; border-radius: 4px; margin-bottom: 5px; margin-top: 8px;">
+                <span>📉 <strong>Ahorro inteligente:</strong> Se descontaron {{ nutriente.data.aporte_de_otros_fertilizantes | number:'1.1-1' }} kg de N aportados por otros fertilizantes.</span>
+              </div>
+
+              <p style="margin-top: 4px;">
+                <strong>Nutriente:</strong> {{ nutriente.nombre }}
+                <span *ngIf="nutriente.data.eficiencia_usada">
+                  - <strong>Eficiencia:</strong> {{ nutriente.data.eficiencia_usada }}
+                </span>
+              </p>
+
+              <!-- Mostrar déficit ajustado (Potasio) -->
+              <p *ngIf="nutriente.key === 'Potasio' && nutriente.data.deficit_ajustado !== nutriente.data.deficit_original"
+                 style="margin-top: 4px; font-size: 0.9rem; color: rgba(255,255,255,0.8);">
+                <strong>Déficit Original:</strong> {{ nutriente.data.deficit_original | number:'1.2-2' }} kg/ha →
+                <strong>Ajustado:</strong> {{ nutriente.data.deficit_ajustado | number:'1.2-2' }} kg/ha
+                (descontó aporte del fertilizante de P)
+              </p>
+
+              <!-- Algoritmo en cascada (Nitrógeno) -->
+              <div *ngIf="nutriente.key === 'Nitrogeno' && nutriente.data.aporte_de_otros_fertilizantes > 0"
+                   style="margin-top: 8px; padding: 8px; background: rgba(76, 175, 80, 0.2); border-left: 3px solid #4caf50; border-radius: 4px;">
+                <p style="font-size: 0.9rem; margin: 0; color: rgba(255,255,255,0.95);">
+                  <strong>🔄 Algoritmo en Cascada Aplicado:</strong>
+                </p>
+                <p style="font-size: 0.85rem; margin: 4px 0 0 0;">
+                  • Déficit Original: <strong>{{ nutriente.data.deficit_original | number:'1.2-2' }} kg/ha</strong>
+                </p>
+                <p style="font-size: 0.85rem; margin: 4px 0 0 0;">
+                  • Aporte de otros fertilizantes: <strong>{{ nutriente.data.aporte_de_otros_fertilizantes | number:'1.2-2' }} kg/ha</strong>
+                </p>
+                <p style="font-size: 0.85rem; margin: 4px 0 0 0;">
+                  • Déficit Ajustado: <strong>{{ nutriente.data.deficit_ajustado | number:'1.2-2' }} kg/ha</strong>
+                </p>
+              </div>
+
+              <p style="margin-top: 4px;">
+                <strong>Dosis Pura Requerida:</strong> {{ nutriente.data.dosis_pura_requerida | number:'1.2-2' }} kg/ha
+              </p>
+
+              <!-- Chips de cantidad -->
+              <p style="margin-top: 8px; font-size: 1.1rem;">
+                <ion-chip
+                  *ngIf="nutriente.tipo === 'primario'"
+                  color="success"
+                  style="margin: 0;">
+                  <strong>{{ nutriente.data.cantidad_kg_ha | number:'1.2-2' }} kg/ha</strong>
+                </ion-chip>
+                <ion-chip
+                  *ngIf="nutriente.tipo === 'secundario'"
+                  [style.background-color]="nutriente.borderColor"
+                  [style.color]="nutriente.key === 'Azufre' ? '#333' : 'white'"
+                  style="margin: 0;">
+                  <strong>{{ nutriente.data.cantidad_kg_ha | number:'1.2-2' }} kg/ha</strong>
+                </ion-chip>
+                &nbsp;=&nbsp;
+                <ion-chip color="warning" style="margin: 0;">
+                  <strong>{{ nutriente.data.cantidad_sacos_50kg | number:'1.2-2' }} sacos de 50kg</strong>
+                </ion-chip>
+              </p>
+
+              <!-- Aportes cruzados (Fósforo) -->
+              <div *ngIf="nutriente.key === 'Fosforo' && (nutriente.data.aporta_nitrogeno > 0 || nutriente.data.aporta_potasio > 0)"
+                   style="margin-top: 12px; padding: 8px; background: rgba(255,255,255,0.1); border-radius: 4px;">
+                <p style="font-size: 0.9rem; margin: 0;">
+                  <strong>💡 Aportes Cruzados:</strong>
+                </p>
+                <p *ngIf="nutriente.data.aporta_nitrogeno > 0" style="font-size: 0.85rem; margin: 4px 0 0 0;">
+                  ✓ Aporta <strong>{{ nutriente.data.aporta_nitrogeno | number:'1.2-2' }} kg/ha</strong> de Nitrógeno (N)
+                </p>
+                <p *ngIf="nutriente.data.aporta_potasio > 0" style="font-size: 0.85rem; margin: 4px 0 0 0;">
+                  ✓ Aporta <strong>{{ nutriente.data.aporta_potasio | number:'1.2-2' }} kg/ha</strong> de Potasio (K2O)
+                </p>
+              </div>
+
+              <!-- Aporte cruzado (Potasio) -->
+              <div *ngIf="nutriente.key === 'Potasio' && nutriente.data.aporta_nitrogeno > 0"
+                   style="margin-top: 12px; padding: 8px; background: rgba(255,255,255,0.1); border-radius: 4px;">
+                <p style="font-size: 0.9rem; margin: 0;">
+                  <strong>💡 Aporte Cruzado:</strong>
+                </p>
+                <p style="font-size: 0.85rem; margin: 4px 0 0 0;">
+                  ✓ Aporta <strong>{{ nutriente.data.aporta_nitrogeno | number:'1.2-2' }} kg/ha</strong> de Nitrógeno (N)
+                </p>
+              </div>
+
+              <!-- Beneficio adicional Dolomita -->
+              <div *ngIf="nutriente.key === 'Magnesio' && nutriente.data.producto && nutriente.data.producto.toLowerCase().includes('dolomita')"
+                   style="margin-top: 12px; padding: 8px; background: rgba(156, 39, 176, 0.2); border-left: 3px solid #9c27b0; border-radius: 4px;">
+                <p style="font-size: 0.9rem; margin: 0; color: rgba(255,255,255,0.95);">
+                  <strong>💡 Beneficio Adicional:</strong>
+                </p>
+                <p style="font-size: 0.85rem; margin: 4px 0 0 0;">
+                  ✓ La Dolomita también aporta Calcio (CaO) y ayuda a corregir el pH del suelo
+                </p>
+              </div>
+
+              <!-- Nota Azufre -->
+              <div *ngIf="nutriente.key === 'Azufre'"
+                   style="margin-top: 12px; padding: 8px; background: rgba(255, 193, 7, 0.2); border-left: 3px solid #ffc107; border-radius: 4px;">
+                <p style="font-size: 0.9rem; margin: 0; color: rgba(255,255,255,0.95);">
+                  <strong>💡 Nota Importante:</strong>
+                </p>
+                <p style="font-size: 0.85rem; margin: 4px 0 0 0;">
+                  ✓ El Azufre es esencial para la síntesis de proteínas y calidad del grano
+                </p>
+              </div>
+
+            </ion-label>
+          </ion-item>
+
+          <!-- CASO 2: Nutriente con cantidad 0 (MENSAJE DE SUFICIENCIA) -->
+          <ion-item
+            *ngIf="nutriente.data.cantidad_kg_ha === 0 && nutriente.tipo === 'primario'"
+            lines="none">
+            <ion-label color="success">
+              <h2><strong>{{ nutriente.numero }} {{ nutriente.nombre }}</strong></h2>
+              <p *ngIf="nutriente.key === 'Nitrogeno' && nutriente.data.aporte_de_otros_fertilizantes > 0">
+                ✅ El Nitrógeno es cubierto completamente por los aportes cruzados de otros fertilizantes
+                (<strong>{{ nutriente.data.aporte_de_otros_fertilizantes | number:'1.2-2' }} kg/ha</strong>).
+              </p>
+              <p *ngIf="nutriente.key !== 'Nitrogeno' || nutriente.data.aporte_de_otros_fertilizantes === 0">
+                ✅ El suelo tiene suficiente {{ nutriente.nombre }}. No es necesario aplicar fertilizante.
+              </p>
+            </ion-label>
+          </ion-item>
+
+        </ng-container>
+
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card *ngIf="resultado && resultado.alertas && resultado.alertas.length > 0" class="ion-margin-top">
+    <ion-card-header>
+      <ion-card-title>⚠️ Diagnóstico y Alertas</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+        <ion-chip
+          *ngFor="let alerta of resultado.alertas"
+          [color]="getColorSeveridad(alerta.severidad)">
+          <strong>{{ alerta.parametro }}:</strong>&nbsp;{{ alerta.mensaje }}
+        </ion-chip>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- TARJETA DE CRONOGRAMA DE APLICACIÓN -->
+  <ion-card *ngIf="resultado && resultado.cronograma" class="ion-margin-top">
+    <ion-card-header color="tertiary">
+      <ion-card-title>📅 Cronograma de Aplicación</ion-card-title>
+      <ion-card-subtitle>¿Cuándo aplicar cada producto?</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+
+      <div *ngFor="let etapa of resultado.cronograma" class="ion-margin-bottom" style="border-bottom: 1px solid #ddd; padding-bottom: 10px;">
+        <h3 style="color: var(--ion-color-tertiary); font-weight: bold; margin-top: 10px;">
+          {{ etapa.etapa }}
+        </h3>
+        <p style="color: #666; font-size: 0.9em; margin-top: 4px;">
+          <strong>{{ etapa.momento }}</strong>
+        </p>
+
+        <ion-list lines="none">
+          <ion-item *ngFor="let app of etapa.aplicaciones" style="--min-height: 20px; font-size: 0.95em;">
+            <ion-label>
+              {{ app.producto }}
+            </ion-label>
+            <div slot="end" style="color: #444;">
+              <strong>{{ app.dosis_kg | number:'1.1-1' }} kg/ha</strong>
+              <span style="color: #888; font-size: 0.9em;">({{ app.sacos | number:'1.1-1' }} sacos)</span>
+            </div>
+          </ion-item>
+        </ion-list>
+      </div>
+
     </ion-card-content>
   </ion-card>
 

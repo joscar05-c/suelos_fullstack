@@ -4,6 +4,10 @@ import { Repository } from 'typeorm';
 import { TexturaSuelo } from './entities/textura-suelo.entity';
 import { TasaMineralizacion } from './entities/tasa-mineralizacion.entity';
 import { FactorNutriente } from './entities/factor-nutriente.entity';
+import { RangosIdealesSeederService } from './rangos-ideales-seeder.service';
+import { InterpretacionAvanzadaSeederService } from './interpretacion-avanzada-seeder.service';
+import { FuentesFertilizantesSeederService } from './fuentes-fertilizantes-seeder.service';
+import { EficienciasSeederService } from './eficiencias-seeder.service';
 
 @Injectable()
 export class SemillaService implements OnModuleInit {
@@ -16,6 +20,10 @@ export class SemillaService implements OnModuleInit {
     private readonly tasaMineralizacionRepository: Repository<TasaMineralizacion>,
     @InjectRepository(FactorNutriente)
     private readonly factorNutrienteRepository: Repository<FactorNutriente>,
+    private readonly rangosIdealesSeeder: RangosIdealesSeederService,
+    private readonly interpretacionSeeder: InterpretacionAvanzadaSeederService,
+    private readonly fertilizantesSeeder: FuentesFertilizantesSeederService,
+    private readonly eficienciasSeeder: EficienciasSeederService,
   ) {}
 
   async onModuleInit() {
@@ -23,6 +31,10 @@ export class SemillaService implements OnModuleInit {
     await this.poblarTexturasSuelo();
     await this.poblarTasasMineralizacion();
     await this.poblarFactoresNutrientes();
+    await this.rangosIdealesSeeder.seed();
+    await this.interpretacionSeeder.seed();
+    await this.fertilizantesSeeder.seed();
+    await this.eficienciasSeeder.seed();
     this.logger.log('Proceso de semilla de datos completado');
   }
 
@@ -75,6 +87,9 @@ export class SemillaService implements OnModuleInit {
       { elemento: 'N', disponibilidad: 0.30, factorConversion: 1.0 },
       { elemento: 'P', disponibilidad: 0.20, factorConversion: 2.29 },
       { elemento: 'K', disponibilidad: 0.40, factorConversion: 1.205 },
+      { elemento: 'Ca', disponibilidad: 0.70, factorConversion: 1.399 },
+      { elemento: 'Mg', disponibilidad: 0.60, factorConversion: 1.658 },
+      { elemento: 'S', disponibilidad: 1.0, factorConversion: 3.0 },
     ];
 
     await this.factorNutrienteRepository.save(factores);
