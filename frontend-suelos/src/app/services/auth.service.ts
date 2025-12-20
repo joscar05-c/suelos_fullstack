@@ -37,12 +37,14 @@ export class AuthService {
   public currentUser$ = this.currentUserSubject.asObservable();
 
   constructor(private http: HttpClient) {
-    // Cargar usuario si hay token guardado
+    // ✅ SOLUCIÓN: Usar setTimeout para diferir la carga del perfil
+    // Esto permite que el servicio termine de construirse antes de hacer peticiones HTTP
     const token = this.getToken();
     if (token) {
-      // Intentar cargar perfil pero sin eliminar token si falla
-      // (puede fallar durante la inicialización de la app)
-      this.loadProfile();
+      // Diferir la carga del perfil hasta el próximo ciclo del event loop
+      setTimeout(() => {
+        this.loadProfile();
+      }, 0);
     }
   }
 
