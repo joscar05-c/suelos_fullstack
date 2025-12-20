@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
@@ -35,10 +35,11 @@ export class AuthService {
   private apiUrl = `${environment.apiUrl}/auth`;
   private currentUserSubject = new BehaviorSubject<Usuario | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
+  private http = inject(HttpClient);
 
-  constructor(private http: HttpClient) {
+  constructor() {
     // Inicializar el usuario desde el token existente sin hacer llamadas HTTP
-    // El perfil se cargará manualmente cuando sea necesario (ej: en APP_INITIALIZER)
+    // El perfil se cargará manualmente cuando sea necesario (ej: en AppComponent.ngOnInit)
     const token = this.getToken();
     if (token) {
       console.log('🔍 Token encontrado en localStorage al inicializar AuthService');
