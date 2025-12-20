@@ -37,14 +37,11 @@ export class AuthService {
   public currentUser$ = this.currentUserSubject.asObservable();
 
   constructor(private http: HttpClient) {
-    // ✅ SOLUCIÓN: Usar setTimeout para diferir la carga del perfil
-    // Esto permite que el servicio termine de construirse antes de hacer peticiones HTTP
+    // Inicializar el usuario desde el token existente sin hacer llamadas HTTP
+    // El perfil se cargará manualmente cuando sea necesario (ej: en APP_INITIALIZER)
     const token = this.getToken();
     if (token) {
-      // Diferir la carga del perfil hasta el próximo ciclo del event loop
-      setTimeout(() => {
-        this.loadProfile();
-      }, 0);
+      console.log('🔍 Token encontrado en localStorage al inicializar AuthService');
     }
   }
 
