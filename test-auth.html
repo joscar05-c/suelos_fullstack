@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🔐 Test de Autenticación</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    h1 { color: #2c3e50; }
+    .section {
+      margin: 20px 0;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    input, button {
+      padding: 10px;
+      margin: 5px 0;
+      width: 100%;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    button {
+      background: #27ae60;
+      color: white;
+      cursor: pointer;
+      border: none;
+      font-weight: bold;
+    }
+    button:hover { background: #229954; }
+    .danger { background: #e74c3c; }
+    .danger:hover { background: #c0392b; }
+    .info { background: #3498db; }
+    .info:hover { background: #2980b9; }
+    .result {
+      background: #ecf0f1;
+      padding: 10px;
+      border-radius: 5px;
+      margin-top: 10px;
+      font-family: monospace;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+    .success { color: #27ae60; font-weight: bold; }
+    .error { color: #e74c3c; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔐 Test de Autenticación JWT</h1>
+    
+    <!-- SECCIÓN 1: REGISTRO -->
+    <div class="section">
+      <h2>1️⃣ Registro de Usuario</h2>
+      <input type="email" id="regEmail" placeholder="Email" value="test@example.com">
+      <input type="password" id="regPassword" placeholder="Contraseña" value="123456">
+      <input type="text" id="regNombre" placeholder="Nombre" value="Usuario Test">
+      <button onclick="register()">📝 Registrar</button>
+      <div id="regResult" class="result"></div>
+    </div>
+
+    <!-- SECCIÓN 2: LOGIN -->
+    <div class="section">
+      <h2>2️⃣ Login</h2>
+      <input type="email" id="loginEmail" placeholder="Email" value="test@example.com">
+      <input type="password" id="loginPassword" placeholder="Contraseña" value="123456">
+      <button onclick="login()">🔐 Login</button>
+      <div id="loginResult" class="result"></div>
+    </div>
+
+    <!-- SECCIÓN 3: VER TOKEN ACTUAL -->
+    <div class="section">
+      <h2>3️⃣ Token Actual en LocalStorage</h2>
+      <button class="info" onclick="showToken()">👁️ Ver Token</button>
+      <div id="tokenResult" class="result"></div>
+    </div>
+
+    <!-- SECCIÓN 4: PROBAR ENDPOINT PROTEGIDO -->
+    <div class="section">
+      <h2>4️⃣ Probar Endpoint Protegido (Chacras)</h2>
+      <button class="info" onclick="getChacras()">📋 GET /chacras</button>
+      <div id="chacrasResult" class="result"></div>
+    </div>
+
+    <!-- SECCIÓN 5: LIMPIAR -->
+    <div class="section">
+      <h2>5️⃣ Limpiar</h2>
+      <button class="danger" onclick="clearToken()">🗑️ Borrar Token</button>
+      <div id="clearResult" class="result"></div>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = 'http://localhost:3000';
+
+    async function register() {
+      const result = document.getElementById('regResult');
+      try {
+        const response = await fetch(`${API_URL}/auth/register`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: document.getElementById('regEmail').value,
+            password: document.getElementById('regPassword').value,
+            nombre: document.getElementById('regNombre').value
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+          localStorage.setItem('token', data.token);
+          result.innerHTML = `<span class="success">✅ Registro exitoso!</span>\nToken: ${data.token.substring(0, 50)}...\nUsuario: ${JSON.stringify(data.user, null, 2)}`;
+        } else {
+          result.innerHTML = `<span class="error">❌ Error:</span> ${JSON.stringify(data, null, 2)}`;
+        }
+      } catch (error) {
+        result.innerHTML = `<span class="error">❌ Error:</span> ${error.message}`;
+      }
+    }
+
+    async function login() {
+      const result = document.getElementById('loginResult');
+      try {
+        const response = await fetch(`${API_URL}/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: document.getElementById('loginEmail').value,
+            password: document.getElementById('loginPassword').value
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+          localStorage.setItem('token', data.token);
+          result.innerHTML = `<span class="success">✅ Login exitoso!</span>\nToken guardado: ${data.token.substring(0, 50)}...\nUsuario: ${JSON.stringify(data.user, null, 2)}`;
+        } else {
+          result.innerHTML = `<span class="error">❌ Error:</span> ${JSON.stringify(data, null, 2)}`;
+        }
+      } catch (error) {
+        result.innerHTML = `<span class="error">❌ Error:</span> ${error.message}`;
+      }
+    }
+
+    function showToken() {
+      const result = document.getElementById('tokenResult');
+      const token = localStorage.getItem('token');
+      
+      if (token) {
+        result.innerHTML = `<span class="success">✅ Token encontrado:</span>\n${token}`;
+      } else {
+        result.innerHTML = `<span class="error">❌ No hay token guardado</span>`;
+      }
+    }
+
+    async function getChacras() {
+      const result = document.getElementById('chacrasResult');
+      const token = localStorage.getItem('token');
+      
+      if (!token) {
+        result.innerHTML = `<span class="error">❌ No hay token. Haz login primero.</span>`;
+        return;
+      }
+      
+      try {
+        const response = await fetch(`${API_URL}/chacras`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+          result.innerHTML = `<span class="success">✅ GET /chacras exitoso!</span>\nStatus: ${response.status}\nChacras: ${JSON.stringify(data, null, 2)}`;
+        } else {
+          result.innerHTML = `<span class="error">❌ Error ${response.status}:</span>\n${JSON.stringify(data, null, 2)}`;
+        }
+      } catch (error) {
+        result.innerHTML = `<span class="error">❌ Error:</span> ${error.message}`;
+      }
+    }
+
+    function clearToken() {
+      const result = document.getElementById('clearResult');
+      localStorage.removeItem('token');
+      result.innerHTML = `<span class="success">✅ Token borrado</span>`;
+    }
+  </script>
+</body>
+</html>

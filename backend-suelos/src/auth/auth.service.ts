@@ -1,16 +1,68 @@
 import {
   Injectable,
-  UnauthorizedException,
-  ConflictException,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { JwtService } from '@nestjs/jwt';
-import * as bcrypt from 'bcrypt';
 import { Usuario } from './entities/usuario.entity';
-import { RegisterDto } from './dto/register.dto';
-import { LoginDto } from './dto/login.dto';
+
+@Injectable()
+export class AuthService {
+  constructor(
+    @InjectRepository(Usuario)
+    private readonly usuarioRepository: Repository<Usuario>,
+  ) {}
+
+  /**
+   * Obtener o crear usuario por UID de Firebase
+   */
+  async findOrCreateByFirebaseUid(firebaseUid: string, phoneNumber?: string, email?: string) {
+    let usuario = await this.usuarioRepository.findOne({
+      where: { firebaseUid },
+    });
+
+    if (!usuario) {
+      // Crear nuevo usuario
+      usuario = this.usuarioRepository.create({
+        firebaseUid,
+        telefono: phoneNumber,
+        email: email || null,
+        nombre: phoneNumber || 'Usuario', // Nombre por defecto
+        activo: true,
+      });
+
+      await this.usuarioRepository.save(usuario);
+    }
+
+    return usuario;
+  }
+
+  /**
+   * Obtener perfil del usuario por UID de Firebase
+   */
+  async getProfile(firebaseUid: string) {
+    const usuario = await this.usuarioRepository.findOne({
+      where: { firebaseUid },
+    });
+
+    if (!usuario) {
+      throw new NotFoundException('Usuario no encontrado');
+    }
+
+    return usuario;
+  }
+
+  /**
+   * Actualizar perfil del usuario
+   */
+  async updateProfile(firebaseUid: string, updateData: Partial<Usuario>) {
+    const usuario = await this.getProfile(firebaseUid);
+    
+    Object.assign(usuario, updateData);
+    
+    return this.usuarioRepository.save(usuario);
+  }
+}
 
 @Injectable()
 export class AuthService {

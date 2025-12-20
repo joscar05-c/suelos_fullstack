@@ -1,50 +1,42 @@
 import {
   Controller,
-  Post,
   Get,
+  Put,
   Body,
   UseGuards,
   Request,
-  HttpCode,
-  HttpStatus,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { RegisterDto } from './dto/register.dto';
-import { LoginDto } from './dto/login.dto';
-import { JwtAuthGuard } from './jwt-auth.guard';
+import { FirebaseAuthGuard } from './firebase-auth.guard';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   /**
-   * POST /auth/register
-   * Registro de nuevo usuario
-   */
-  @Post('register')
-  @HttpCode(HttpStatus.CREATED)
-  async register(@Body() registerDto: RegisterDto) {
-    return this.authService.register(registerDto);
-  }
-
-  /**
-   * POST /auth/login
-   * Login de usuario
-   */
-  @Post('login')
-  @HttpCode(HttpStatus.OK)
-  async login(@Body() loginDto: LoginDto) {
-    return this.authService.login(loginDto);
-  }
-
-  /**
    * GET /auth/profile
-   * Obtener perfil del usuario autenticado
-   * Requiere JWT en header: Authorization: Bearer <token>
+   * Obtener perfil del usuario autenticado con Firebase
    */
   @Get('profile')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(FirebaseAuthGuard)
   async getProfile(@Request() req) {
-    return this.authService.getProfile(req.user.userId);
+    // Obtener o crear el usuario en nuestra BD
+    const usuario = await this.authService.findOrCreateByFirebaseUid(
+      req.user.uid,
+      req.user.phoneNumber,
+      req.user.email
+    );
+
+    return usuario;
+  }
+
+  /**
+   * PUT /auth/profile
+   * Actualizar perfil del usuario
+   */
+  @Put('profile')
+  @UseGuards(FirebaseAuthGuard)
+  async updateProfile(@Request() req, @Body() updateData: any) {
+    return this.authService.updateProfile(req.user.uid, updateData);
   }
 }

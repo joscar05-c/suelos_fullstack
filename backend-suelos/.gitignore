@@ -1,6 +1,9 @@
 # compiled output
 /dist
 /node_modules
+
+# Firebase credentials
+firebase-service-account.json
 /build
 
 # Logs

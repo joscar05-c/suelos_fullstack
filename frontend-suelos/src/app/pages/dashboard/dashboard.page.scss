@@ -1,22 +1,32 @@
+// Estilo para el botón de logout
+.logout-button {
+  --color: white;
+  font-size: 24px;
+
+  ion-icon {
+    font-size: 24px;
+  }
+}
+
 .user-header {
   display: flex;
   align-items: center;
   padding: 20px;
   background: var(--ion-color-success);
   color: white;
-  
+
   ion-icon {
     font-size: 60px;
     margin-right: 16px;
   }
-  
+
   .user-info {
     h2 {
       margin: 0;
       font-size: 20px;
       font-weight: bold;
     }
-    
+
     p {
       margin: 4px 0 0;
       font-size: 14px;
@@ -38,11 +48,11 @@
   align-items: center;
   justify-content: center;
   padding: 60px 20px;
-  
+
   ion-spinner {
     margin-bottom: 16px;
   }
-  
+
   p {
     color: var(--ion-color-medium);
   }
@@ -51,19 +61,19 @@
 .empty-state {
   text-align: center;
   padding: 60px 30px;
-  
+
   ion-icon {
     font-size: 100px;
     margin-bottom: 20px;
   }
-  
+
   h3 {
     font-size: 22px;
     font-weight: bold;
     margin-bottom: 10px;
     color: var(--ion-text-color);
   }
-  
+
   p {
     color: var(--ion-color-medium);
     font-size: 16px;
@@ -73,52 +83,52 @@
 
 .chacras-list {
   padding: 0 8px 16px;
-  
+
   .chacra-item {
     margin-bottom: 12px;
     border-radius: 12px;
     --background: var(--ion-background-color);
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    
+
     ion-label {
       h2 {
         font-weight: 600;
         font-size: 18px;
         margin-bottom: 4px;
       }
-      
+
       p {
         font-size: 14px;
         margin: 2px 0;
-        
+
         &.ubicacion {
           display: flex;
           align-items: center;
           gap: 4px;
-          
+
           ion-icon {
             font-size: 14px;
           }
         }
       }
-      
+
       .stats {
         display: flex;
         align-items: center;
         gap: 12px;
         margin-top: 8px;
-        
+
         ion-badge {
           display: flex;
           align-items: center;
           gap: 4px;
           padding: 6px 10px;
-          
+
           ion-icon {
             font-size: 14px;
           }
         }
-        
+
         .last-calc {
           font-size: 12px;
         }

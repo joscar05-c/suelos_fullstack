@@ -15,12 +15,16 @@ import {
 import { ChacrasService } from './chacras.service';
 import { CreateChacraDto } from './dto/create-chacra.dto';
 import { UpdateChacraDto } from './dto/update-chacra.dto';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { FirebaseAuthGuard } from '../auth/firebase-auth.guard';
+import { AuthService } from '../auth/auth.service';
 
 @Controller('chacras')
-@UseGuards(JwtAuthGuard)
+@UseGuards(FirebaseAuthGuard)
 export class ChacrasController {
-  constructor(private readonly chacrasService: ChacrasService) {}
+  constructor(
+    private readonly chacrasService: ChacrasService,
+    private readonly authService: AuthService,
+  ) {}
 
   /**
    * GET /chacras
@@ -28,7 +32,14 @@ export class ChacrasController {
    */
   @Get()
   async findAll(@Request() req) {
-    return this.chacrasService.findAll(req.user.userId);
+    // Obtener o crear usuario en BD
+    const usuario = await this.authService.findOrCreateByFirebaseUid(
+      req.user.uid,
+      req.user.phoneNumber,
+      req.user.email
+    );
+    
+    return this.chacrasService.findAll(usuario.id);
   }
 
   /**
@@ -38,7 +49,13 @@ export class ChacrasController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async create(@Request() req, @Body() createChacraDto: CreateChacraDto) {
-    return this.chacrasService.create(req.user.userId, createChacraDto);
+    const usuario = await this.authService.findOrCreateByFirebaseUid(
+      req.user.uid,
+      req.user.phoneNumber,
+      req.user.email
+    );
+    
+    return this.chacrasService.create(usuario.id, createChacraDto);
   }
 
   /**
