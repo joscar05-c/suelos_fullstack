@@ -17,6 +17,7 @@ import { EficienciasSeederService } from './eficiencias-seeder.service';
 import { CalculoSueloService } from './calculo-suelo.service';
 import { CalculoSueloController } from './calculo-suelo.controller';
 import { CatalogoController } from './controllers/catalogo.controller';
+import { ChacrasModule } from '../chacras/chacras.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { CatalogoController } from './controllers/catalogo.controller';
       FuenteFertilizante,
       EficienciaNutriente,
     ]),
+    ChacrasModule, // Para acceso a ChacrasService
   ],
   controllers: [CalculoSueloController, CatalogoController],
   providers: [

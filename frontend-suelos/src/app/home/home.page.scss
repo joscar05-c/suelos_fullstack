@@ -16,3 +16,10 @@ ion-chip {
 .ion-margin-top {
   margin-top: 20px;
 }
+
+.button-group {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}

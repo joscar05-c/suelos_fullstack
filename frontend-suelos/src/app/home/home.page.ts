@@ -1,23 +1,27 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import {
   IonHeader, IonToolbar, IonTitle, IonContent,
   IonCard, IonCardHeader, IonCardTitle, IonCardContent,
   IonItem, IonLabel, IonInput, IonSelect, IonSelectOption,
-  IonButton, IonList, IonChip, IonCardSubtitle, IonIcon, IonNote } from '@ionic/angular/standalone';
+  IonButton, IonList, IonChip, IonCardSubtitle, IonIcon, IonNote, IonButtons,
+  AlertController, ToastController } from '@ionic/angular/standalone';
 import { SueloService } from '../services/suelo.service';
+import { AuthService } from '../services/auth.service';
+import { ChacrasService, Chacra } from '../services/chacras.service';
 import { RespuestaCalculo } from '../interfaces/suelo.interface';
 import { forkJoin } from 'rxjs';
 import { addIcons } from 'ionicons';
-import { warningOutline } from 'ionicons/icons';
+import { warningOutline, logInOutline, listOutline, saveOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
   standalone: true,
-  imports: [IonNote, IonCardSubtitle,
+  imports: [IonNote, IonCardSubtitle, IonButtons,
     CommonModule,
     ReactiveFormsModule,
     IonHeader, IonToolbar, IonTitle, IonContent,
@@ -29,9 +33,15 @@ import { warningOutline } from 'ionicons/icons';
 export class HomePage implements OnInit {
   private fb = inject(FormBuilder);
   private sueloService = inject(SueloService);
+  private authService = inject(AuthService);
+  private chacrasService = inject(ChacrasService);
+  private router = inject(Router);
+  private alertController = inject(AlertController);
+  private toastController = inject(ToastController);
 
   formularioSuelo: FormGroup;
   resultado: RespuestaCalculo | null = null;
+  guardando = false;
 
   // Listas cargadas dinámicamente desde el Backend
   listaTexturas: any[] = [];
@@ -43,7 +53,7 @@ export class HomePage implements OnInit {
 
   constructor() {
     // Registrar iconos
-    addIcons({ warningOutline });
+    addIcons({ warningOutline, logInOutline, listOutline, saveOutline });
 
     // Valores por defecto del ejercicio de la Foto para probar rápido
     this.formularioSuelo = this.fb.group({
@@ -151,6 +161,169 @@ export class HomePage implements OnInit {
         }
       });
     }
+  }
+
+  async guardarCalculo() {
+    if (!this.authService.isAuthenticated()) {
+      const alert = await this.alertController.create({
+        header: 'Iniciar Sesión',
+        message: 'Debes iniciar sesión para guardar el cálculo',
+        buttons: [
+          {
+            text: 'Cancelar',
+            role: 'cancel'
+          },
+          {
+            text: 'Ir a Login',
+            handler: () => {
+              this.router.navigate(['/login'], { queryParams: { returnUrl: '/home' } });
+            }
+          }
+        ]
+      });
+      await alert.present();
+      return;
+    }
+
+    // Cargar lista de chacras del usuario
+    this.chacrasService.getChacras().subscribe({
+      next: async (chacras) => {
+        if (chacras.length === 0) {
+          await this.showNoChacrasAlert();
+        } else {
+          await this.showSelectChacraAlert(chacras);
+        }
+      },
+      error: (error) => {
+        console.error('Error al cargar chacras:', error);
+        this.showToast('Error al cargar las chacras', 'danger');
+      }
+    });
+  }
+
+  async showNoChacrasAlert() {
+    const alert = await this.alertController.create({
+      header: 'Sin Chacras',
+      message: 'Primero debes crear una chacra en el dashboard',
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel'
+        },
+        {
+          text: 'Ir a Dashboard',
+          handler: () => {
+            this.router.navigate(['/dashboard']);
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+  async showSelectChacraAlert(chacras: Chacra[]) {
+    const inputs = chacras.map(chacra => ({
+      type: 'radio' as const,
+      label: `${chacra.nombre} (${chacra.areaHa} ha)`,
+      value: chacra.id
+    }));
+
+    const alert = await this.alertController.create({
+      header: 'Seleccionar Chacra',
+      message: 'Elige dónde guardar este análisis',
+      inputs: inputs,
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel'
+        },
+        {
+          text: 'Guardar',
+          handler: async (chacraId) => {
+            if (chacraId) {
+              await this.showNombreMuestraAlert(chacraId);
+            }
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+  async showNombreMuestraAlert(chacraId: number) {
+    const alert = await this.alertController.create({
+      header: 'Nombre del Análisis',
+      inputs: [
+        {
+          name: 'nombreMuestra',
+          type: 'text',
+          placeholder: 'Ej: Análisis Enero 2025',
+          value: `Análisis ${new Date().toLocaleDateString('es-ES')}`
+        }
+      ],
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel'
+        },
+        {
+          text: 'Guardar',
+          handler: (data) => {
+            this.saveCalculoToBackend(chacraId, data.nombreMuestra);
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+  saveCalculoToBackend(chacraId: number, nombreMuestra: string) {
+    if (!this.resultado) return;
+
+    this.guardando = true;
+    const datos = this.formularioSuelo.value;
+
+    this.sueloService.calcularYGuardar({
+      chacraId,
+      nombreMuestra,
+      datos
+    }).subscribe({
+      next: (response) => {
+        this.guardando = false;
+        this.showToast(`Guardado en ${response.chacraNombre}`, 'success');
+      },
+      error: (error) => {
+        this.guardando = false;
+        console.error('Error al guardar:', error);
+        this.showToast('Error al guardar el cálculo', 'danger');
+      }
+    });
+  }
+
+  goToLogin() {
+    this.router.navigate(['/login']);
+  }
+
+  goToDashboard() {
+    if (this.authService.isAuthenticated()) {
+      this.router.navigate(['/dashboard']);
+    } else {
+      this.router.navigate(['/login']);
+    }
+  }
+
+  isAuthenticated(): boolean {
+    return this.authService.isAuthenticated();
+  }
+
+  async showToast(message: string, color: string) {
+    const toast = await this.toastController.create({
+      message,
+      duration: 2500,
+      color,
+      position: 'bottom'
+    });
+    toast.present();
   }
 
   // Método auxiliar para obtener el color de las alertas según severidad

@@ -1,0 +1,115 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="success">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/dashboard"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ chacra?.nombre }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="presentEditAlert()">
+        <ion-icon name="create" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading-container">
+    <ion-spinner name="circles" color="success"></ion-spinner>
+  </div>
+
+  <!-- Contenido principal -->
+  <div *ngIf="!loading && chacra">
+    <!-- Tarjeta de información -->
+    <ion-card class="info-card">
+      <ion-card-content>
+        <div class="info-row">
+          <ion-icon name="resize" color="primary"></ion-icon>
+          <div>
+            <label>Área</label>
+            <p>{{ chacra.areaHa }} hectáreas</p>
+          </div>
+        </div>
+
+        <div class="info-row" *ngIf="chacra.ubicacion">
+          <ion-icon name="map" color="success"></ion-icon>
+          <div>
+            <label>Ubicación</label>
+            <p>{{ chacra.ubicacion }}</p>
+          </div>
+        </div>
+
+        <div class="info-row" *ngIf="chacra.descripcion">
+          <ion-icon name="document-text" color="tertiary"></ion-icon>
+          <div>
+            <label>Descripción</label>
+            <p>{{ chacra.descripcion }}</p>
+          </div>
+        </div>
+
+        <div class="stats-row">
+          <div class="stat-item">
+            <ion-badge color="primary">
+              {{ calculos.length }}
+            </ion-badge>
+            <label>Cálculos</label>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Botón para nuevo cálculo -->
+    <div class="action-section">
+      <ion-button expand="block" (click)="goToCalculator()" color="success">
+        <ion-icon name="add-circle" slot="start"></ion-icon>
+        Realizar Nuevo Cálculo
+      </ion-button>
+    </div>
+
+    <!-- Historial de cálculos -->
+    <div class="historial-section">
+      <h2 class="section-title">
+        <ion-icon name="time"></ion-icon>
+        Historial de Cálculos
+      </h2>
+
+      <!-- Lista vacía -->
+      <div *ngIf="calculos.length === 0" class="empty-historial">
+        <ion-icon name="document-text-outline" color="medium"></ion-icon>
+        <p>No hay cálculos registrados</p>
+        <p class="hint">Realiza tu primer análisis de suelo</p>
+      </div>
+
+      <!-- Lista de cálculos -->
+      <ion-list *ngIf="calculos.length > 0">
+        <ion-item 
+          *ngFor="let calculo of calculos"
+          button
+          (click)="viewCalculoDetail(calculo)"
+          detail="true"
+          class="calculo-item"
+        >
+          <ion-icon name="flask" slot="start" color="primary"></ion-icon>
+          
+          <ion-label>
+            <h3>{{ calculo.nombreMuestra }}</h3>
+            <p>{{ getFormattedDate(calculo.fecha) }}</p>
+            <div class="calculo-stats">
+              <ion-badge color="medium" *ngIf="calculo.metaRendimiento">
+                <ion-icon name="trending-up"></ion-icon>
+                {{ calculo.metaRendimiento }} qq/ha
+              </ion-badge>
+              <ion-badge color="secondary" *ngIf="calculo.ph">
+                pH: {{ calculo.ph }}
+              </ion-badge>
+              <ion-badge [color]="getAlertColor(calculo.alertasCount)">
+                <ion-icon name="alert-circle"></ion-icon>
+                {{ calculo.alertasCount || 0 }} alertas
+              </ion-badge>
+            </div>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </div>
+  </div>
+</ion-content>

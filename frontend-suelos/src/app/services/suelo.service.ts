@@ -4,6 +4,18 @@ import { Observable } from 'rxjs';
 import { SolicitudCalculo, RespuestaCalculo } from '../interfaces/suelo.interface';
 import { environment } from '../../environments/environment';
 
+export interface CalcularYGuardarDto {
+  chacraId: number;
+  nombreMuestra?: string;
+  datos: SolicitudCalculo;
+}
+
+export interface CalcularYGuardarResponse {
+  calculoId: number;
+  chacraNombre: string;
+  resultado: RespuestaCalculo;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -11,11 +23,15 @@ export class SueloService {
   private http = inject(HttpClient);
 
   // URL base desde variables de entorno
-  private apiUrl = `${environment.apiUrl}/calculo-suelo/calcular-nutrientes`;
+  private apiUrl = `${environment.apiUrl}/calculo-suelo`;
   private catalogoUrl = `${environment.apiUrl}/catalogo`;
 
   calcularNutrientes(datos: SolicitudCalculo): Observable<RespuestaCalculo> {
-    return this.http.post<RespuestaCalculo>(this.apiUrl, datos);
+    return this.http.post<RespuestaCalculo>(`${this.apiUrl}/calcular-nutrientes`, datos);
+  }
+
+  calcularYGuardar(data: CalcularYGuardarDto): Observable<CalcularYGuardarResponse> {
+    return this.http.post<CalcularYGuardarResponse>(`${this.apiUrl}/calcular-y-guardar`, data);
   }
 
   getTexturas(): Observable<any[]> {
@@ -29,7 +45,7 @@ export class SueloService {
   // ============================================
   // MÉTODOS FILTRADOS CON INTELIGENCIA AGRONÓMICA
   // ============================================
-  
+
   // Fertilizantes ricos en Nitrógeno (N > 9%)
   getFertilizantesNitrogeno(): Observable<any[]> {
     return this.http.get<any[]>(`${this.catalogoUrl}/fertilizantes/nitrogeno`);

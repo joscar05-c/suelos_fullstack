@@ -966,14 +966,7 @@ export class CalculoSueloService {
   }
 
   /**
-   * C. MÉTODO DE FERTILIZACIÓN EN CASCADA (Págs 12-13 PDF)
-   * Orden: P primero → K segundo → N al final → Mg y S (descontando aportes)
-   * Usa eficiencias dinámicas desde la BD
-   * 
-   * ARQUITECTURA: Patrón "Acumulador de Nutrientes"
-   * - Rastrea TODOS los aportes cruzados de cada fertilizante aplicado
-   * - Descuenta automáticamente de los déficits restantes
-   * - Escalable a cualquier nutriente (macro, secundario, micro)
+
    */
   private async calcularFertilizacionCascada(
     deficitN: number,

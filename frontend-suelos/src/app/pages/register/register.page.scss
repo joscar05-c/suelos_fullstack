@@ -1,0 +1,64 @@
+.register-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 100%;
+  padding: 20px;
+}
+
+.header-section {
+  text-align: center;
+  margin-bottom: 30px;
+
+  .header-icon {
+    font-size: 70px;
+    margin-bottom: 15px;
+  }
+
+  h1 {
+    font-size: 26px;
+    font-weight: bold;
+    margin: 10px 0;
+    color: var(--ion-color-success);
+  }
+
+  p {
+    color: var(--ion-color-medium);
+    font-size: 14px;
+  }
+}
+
+.register-form {
+  max-width: 400px;
+  margin: 0 auto;
+  width: 100%;
+
+  ion-item {
+    margin-bottom: 14px;
+    --background: var(--ion-background-color);
+    border-radius: 8px;
+  }
+
+  .validation-message,
+  .error-message {
+    display: block;
+    text-align: center;
+    margin: 8px 0;
+
+    p {
+      margin: 0;
+      font-size: 13px;
+    }
+  }
+
+  .register-button {
+    margin-top: 24px;
+    height: 48px;
+    font-weight: 600;
+  }
+
+  .links-section {
+    margin-top: 20px;
+    text-align: center;
+  }
+}

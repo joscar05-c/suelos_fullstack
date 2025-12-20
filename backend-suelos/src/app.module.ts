@@ -4,6 +4,8 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CalculoSueloModule } from './calculo-suelo/calculo-suelo.module';
 import { ConfigModule } from '@nestjs/config';
+import { AuthModule } from './auth/auth.module';
+import { ChacrasModule } from './chacras/chacras.module';
 
 @Module({
   imports: [
@@ -18,8 +20,10 @@ import { ConfigModule } from '@nestjs/config';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
       autoLoadEntities: true,
-      synchronize: true,
+      synchronize: true, // ⚠️ Cambiar a false en producción
     }),
+    AuthModule,
+    ChacrasModule,
     CalculoSueloModule,
   ],
   controllers: [AppController],
