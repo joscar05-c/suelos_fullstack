@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ActivatedRoute, Router } from '@angular/router';
 import { IonicModule, AlertController, ToastController, ModalController } from '@ionic/angular';
 import { ChacrasService, Chacra, CalculoResumen, CalculoDetalle } from '../../services/chacras.service';
@@ -9,7 +9,7 @@ import { ChacrasService, Chacra, CalculoResumen, CalculoDetalle } from '../../se
   templateUrl: './chacra-detalle.page.html',
   styleUrls: ['./chacra-detalle.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule]
+  imports: [IonicModule]
 })
 export class ChacraDetallePage implements OnInit {
   chacraId!: number;

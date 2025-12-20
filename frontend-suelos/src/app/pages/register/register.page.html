@@ -61,26 +61,33 @@
         ></ion-input>
       </ion-item>
 
-      <ion-text
-        color="danger"
-        *ngIf="registerForm.hasError('mismatch') && registerForm.get('confirmPassword')?.touched"
-        class="validation-message"
-      >
-        <p>Las contraseñas no coinciden</p>
-      </ion-text>
+      @if (registerForm.hasError('mismatch') && registerForm.get('confirmPassword')?.touched) {
+        <ion-text
+          color="danger"
+          class="validation-message"
+          >
+          <p>Las contraseñas no coinciden</p>
+        </ion-text>
+      }
 
-      <ion-text color="danger" *ngIf="errorMessage" class="error-message">
-        <p>{{ errorMessage }}</p>
-      </ion-text>
+      @if (errorMessage) {
+        <ion-text color="danger" class="error-message">
+          <p>{{ errorMessage }}</p>
+        </ion-text>
+      }
 
       <ion-button
         expand="block"
         type="submit"
         [disabled]="!registerForm.valid || loading"
         class="register-button"
-      >
-        <ion-spinner *ngIf="loading" name="circles"></ion-spinner>
-        <span *ngIf="!loading">Crear Cuenta</span>
+        >
+        @if (loading) {
+          <ion-spinner name="circles"></ion-spinner>
+        }
+        @if (!loading) {
+          <span>Crear Cuenta</span>
+        }
       </ion-button>
 
       <div class="links-section">

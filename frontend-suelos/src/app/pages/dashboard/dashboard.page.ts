@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { Router } from '@angular/router';
 import { IonicModule, AlertController, ToastController } from '@ionic/angular';
 import { AuthService, Usuario } from '../../services/auth.service';
@@ -10,7 +10,7 @@ import { ChacrasService, Chacra } from '../../services/chacras.service';
   templateUrl: './dashboard.page.html',
   styleUrls: ['./dashboard.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule]
+  imports: [IonicModule]
 })
 export class DashboardPage implements OnInit {
   usuario: Usuario | null = null;

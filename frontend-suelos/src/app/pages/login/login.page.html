@@ -34,18 +34,24 @@
         ></ion-input>
       </ion-item>
 
-      <ion-text color="danger" *ngIf="errorMessage" class="error-message">
-        <p>{{ errorMessage }}</p>
-      </ion-text>
+      @if (errorMessage) {
+        <ion-text color="danger" class="error-message">
+          <p>{{ errorMessage }}</p>
+        </ion-text>
+      }
 
       <ion-button
         expand="block"
         type="submit"
         [disabled]="!loginForm.valid || loading"
         class="login-button"
-      >
-        <ion-spinner *ngIf="loading" name="circles"></ion-spinner>
-        <span *ngIf="!loading">Ingresar</span>
+        >
+        @if (loading) {
+          <ion-spinner name="circles"></ion-spinner>
+        }
+        @if (!loading) {
+          <span>Ingresar</span>
+        }
       </ion-button>
 
       <div class="links-section">
