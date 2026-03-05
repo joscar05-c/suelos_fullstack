@@ -1,33 +1,86 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  ReactiveFormsModule,
+  FormBuilder,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { Router } from '@angular/router';
 import {
-  IonHeader, IonToolbar, IonTitle, IonContent,
-  IonCard, IonCardHeader, IonCardTitle, IonCardContent,
-  IonItem, IonLabel, IonInput, IonSelect, IonSelectOption,
-  IonButton, IonList, IonChip, IonCardSubtitle, IonIcon, IonNote, IonButtons,
-  AlertController, ToastController } from '@ionic/angular/standalone';
+  LoadingController,
+  IonHeader,
+  IonRow,
+  IonCol,
+  IonToolbar,
+  IonTitle,
+  IonContent,
+  IonCard,
+  IonCardHeader,
+  IonCardTitle,
+  IonCardContent,
+  IonItem,
+  IonLabel,
+  IonInput,
+  IonSelect,
+  IonSelectOption,
+  IonButton,
+  IonList,
+  IonChip,
+  IonCardSubtitle,
+  IonIcon,
+  IonNote,
+  IonButtons,
+  AlertController,
+  ToastController,
+} from '@ionic/angular/standalone';
 import { SueloService } from '../services/suelo.service';
 import { AuthService } from '../services/auth.service';
 import { ChacrasService, Chacra } from '../services/chacras.service';
 import { RespuestaCalculo } from '../interfaces/suelo.interface';
 import { forkJoin } from 'rxjs';
 import { addIcons } from 'ionicons';
-import { warningOutline, logInOutline, listOutline, saveOutline } from 'ionicons/icons';
+import {
+  warningOutline,
+  logInOutline,
+  listOutline,
+  saveOutline,
+  arrowBackOutline,
+  arrowForwardOutline,
+  calculatorOutline,
+} from 'ionicons/icons';
+import { IonicModule } from '@ionic/angular';
 
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
   standalone: true,
-  imports: [IonNote, IonCardSubtitle, IonButtons,
+  imports: [
+    IonNote,
+    IonCol,
+    IonRow,
+    IonCardSubtitle,
+    IonButtons,
     CommonModule,
     ReactiveFormsModule,
-    IonHeader, IonToolbar, IonTitle, IonContent,
-    IonCard, IonCardHeader, IonCardTitle, IonCardContent,
-    IonItem, IonLabel, IonInput, IonSelect, IonSelectOption,
-    IonButton, IonList, IonChip, IonIcon
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonContent,
+    IonCard,
+    IonCardHeader,
+    IonCardTitle,
+    IonCardContent,
+    IonItem,
+    IonLabel,
+    IonInput,
+    IonSelect,
+    IonSelectOption,
+    IonButton,
+    IonList,
+    IonChip,
+    IonIcon,
   ],
 })
 export class HomePage implements OnInit {
@@ -51,9 +104,30 @@ export class HomePage implements OnInit {
   listaPotasio: any[] = [];
   listaEnmiendas: any[] = [];
 
-  constructor() {
+  pasoActual: number = 1; // Para la navegación paso a paso
+  siguientePaso() {
+    if (this.pasoActual < 6) {
+      this.pasoActual++;
+    }
+  }
+
+  anteriorPaso() {
+    if (this.pasoActual > 1) {
+      this.pasoActual--;
+    }
+  }
+
+  constructor(private loadingCtrl: LoadingController) {
     // Registrar iconos
-    addIcons({ warningOutline, logInOutline, listOutline, saveOutline });
+    addIcons({
+      warningOutline,
+      logInOutline,
+      listOutline,
+      saveOutline,
+      arrowBackOutline,
+      arrowForwardOutline,
+      calculatorOutline,
+    });
 
     // Valores por defecto del ejercicio de la Foto para probar rápido
     this.formularioSuelo = this.fb.group({
@@ -85,7 +159,7 @@ export class HomePage implements OnInit {
       idFuenteN: [3, [Validators.required]], // Default: Urea (ID 3)
       idFuenteP: [5, [Validators.required]], // Default: Superfosfato Triple (ID 5)
       idFuenteK: [6, [Validators.required]], // Default: Cloruro de Potasio (ID 6)
-      idFuenteCa: [19, [Validators.required]] // Default: Cal Agrícola (ID 19)
+      idFuenteCa: [19, [Validators.required]], // Default: Cal Agrícola (ID 19)
     });
   }
 
@@ -102,7 +176,7 @@ export class HomePage implements OnInit {
       nitrogeno: this.sueloService.getFertilizantesNitrogeno(),
       fosforo: this.sueloService.getFertilizantesFosforo(),
       potasio: this.sueloService.getFertilizantesPotasio(),
-      enmiendas: this.sueloService.getEnmiendas()
+      enmiendas: this.sueloService.getEnmiendas(),
     }).subscribe({
       next: (catalogos) => {
         // Asignar texturas y zonas directamente
@@ -111,20 +185,27 @@ export class HomePage implements OnInit {
 
         // ✅ ASIGNAR LISTAS YA FILTRADAS POR EL BACKEND
         // Ya no necesitamos filtrar en el frontend porque el backend lo hace
-        this.listaNitrogeno = catalogos.nitrogeno;   // Solo N > 9%
-        this.listaFosforo = catalogos.fosforo;       // Solo P2O5 > 5%
-        this.listaPotasio = catalogos.potasio;       // Solo K2O > 15% (SIN GUANO)
-        this.listaEnmiendas = catalogos.enmiendas;   // Solo CaO > 20% o ENMIENDA
+        this.listaNitrogeno = catalogos.nitrogeno; // Solo N > 9%
+        this.listaFosforo = catalogos.fosforo; // Solo P2O5 > 5%
+        this.listaPotasio = catalogos.potasio; // Solo K2O > 15% (SIN GUANO)
+        this.listaEnmiendas = catalogos.enmiendas; // Solo CaO > 20% o ENMIENDA
       },
       error: (err) => {
         console.error('Error cargando catálogos', err);
-        alert('Error al cargar los datos maestros del servidor. Verifica la conexión.');
-      }
+        alert(
+          'Error al cargar los datos maestros del servidor. Verifica la conexión.',
+        );
+      },
     });
   }
 
-  calcular() {
+  async calcular() {
     if (this.formularioSuelo.valid) {
+      const loading = await this.loadingCtrl.create({
+        message: 'Calculando recomendación...',
+        spinner: 'crescent',
+      });
+      await loading.present();
       const datos = this.formularioSuelo.value;
       // Convertir strings a números por si acaso (Ionic a veces devuelve strings en inputs)
       datos.areaHa = Number(datos.areaHa);
@@ -154,12 +235,23 @@ export class HomePage implements OnInit {
       this.sueloService.calcularNutrientes(datos).subscribe({
         next: (res) => {
           this.resultado = res;
+          this.pasoActual = 0;
+          window.scrollTo(0, 0);
+          loading.dismiss();
+          setTimeout(() => {
+            document.querySelector('ion-content')?.scrollToTop(500);
+          }, 100);
         },
         error: (err) => {
+          loading.dismiss();
           console.error('Error calculando', err);
-          alert('Error al conectar con el servidor. Revisa que el backend esté corriendo.');
-        }
+          alert(
+            'Error al conectar con el servidor. Revisa que el backend esté corriendo.',
+          );
+        },
       });
+    } else {
+      console.log('Formulario inválido');
     }
   }
 
@@ -171,15 +263,17 @@ export class HomePage implements OnInit {
         buttons: [
           {
             text: 'Cancelar',
-            role: 'cancel'
+            role: 'cancel',
           },
           {
             text: 'Ir a Login',
             handler: () => {
-              this.router.navigate(['/login'], { queryParams: { returnUrl: '/home' } });
-            }
-          }
-        ]
+              this.router.navigate(['/login'], {
+                queryParams: { returnUrl: '/home' },
+              });
+            },
+          },
+        ],
       });
       await alert.present();
       return;
@@ -197,7 +291,7 @@ export class HomePage implements OnInit {
       error: (error) => {
         console.error('Error al cargar chacras:', error);
         this.showToast('Error al cargar las chacras', 'danger');
-      }
+      },
     });
   }
 
@@ -208,24 +302,24 @@ export class HomePage implements OnInit {
       buttons: [
         {
           text: 'Cancelar',
-          role: 'cancel'
+          role: 'cancel',
         },
         {
           text: 'Ir a Dashboard',
           handler: () => {
             this.router.navigate(['/dashboard']);
-          }
-        }
-      ]
+          },
+        },
+      ],
     });
     await alert.present();
   }
 
   async showSelectChacraAlert(chacras: Chacra[]) {
-    const inputs = chacras.map(chacra => ({
+    const inputs = chacras.map((chacra) => ({
       type: 'radio' as const,
       label: `${chacra.nombre} (${chacra.areaHa} ha)`,
-      value: chacra.id
+      value: chacra.id,
     }));
 
     const alert = await this.alertController.create({
@@ -235,7 +329,7 @@ export class HomePage implements OnInit {
       buttons: [
         {
           text: 'Cancelar',
-          role: 'cancel'
+          role: 'cancel',
         },
         {
           text: 'Guardar',
@@ -243,9 +337,9 @@ export class HomePage implements OnInit {
             if (chacraId) {
               await this.showNombreMuestraAlert(chacraId);
             }
-          }
-        }
-      ]
+          },
+        },
+      ],
     });
     await alert.present();
   }
@@ -258,21 +352,21 @@ export class HomePage implements OnInit {
           name: 'nombreMuestra',
           type: 'text',
           placeholder: 'Ej: Análisis Enero 2025',
-          value: `Análisis ${new Date().toLocaleDateString('es-ES')}`
-        }
+          value: `Análisis ${new Date().toLocaleDateString('es-ES')}`,
+        },
       ],
       buttons: [
         {
           text: 'Cancelar',
-          role: 'cancel'
+          role: 'cancel',
         },
         {
           text: 'Guardar',
           handler: (data) => {
             this.saveCalculoToBackend(chacraId, data.nombreMuestra);
-          }
-        }
-      ]
+          },
+        },
+      ],
     });
     await alert.present();
   }
@@ -283,21 +377,23 @@ export class HomePage implements OnInit {
     this.guardando = true;
     const datos = this.formularioSuelo.value;
 
-    this.sueloService.calcularYGuardar({
-      chacraId,
-      nombreMuestra,
-      datos
-    }).subscribe({
-      next: (response) => {
-        this.guardando = false;
-        this.showToast(`Guardado en ${response.chacraNombre}`, 'success');
-      },
-      error: (error) => {
-        this.guardando = false;
-        console.error('Error al guardar:', error);
-        this.showToast('Error al guardar el cálculo', 'danger');
-      }
-    });
+    this.sueloService
+      .calcularYGuardar({
+        chacraId,
+        nombreMuestra,
+        datos,
+      })
+      .subscribe({
+        next: (response) => {
+          this.guardando = false;
+          this.showToast(`Guardado en ${response.chacraNombre}`, 'success');
+        },
+        error: (error) => {
+          this.guardando = false;
+          console.error('Error al guardar:', error);
+          this.showToast('Error al guardar el cálculo', 'danger');
+        },
+      });
   }
 
   goToLogin() {
@@ -321,7 +417,7 @@ export class HomePage implements OnInit {
       message,
       duration: 2500,
       color,
-      position: 'bottom'
+      position: 'bottom',
     });
     toast.present();
   }
@@ -362,7 +458,7 @@ export class HomePage implements OnInit {
       data: rec.Fosforo,
       icon: '🔥',
       color: 'warning',
-      tipo: 'primario'
+      tipo: 'primario',
     });
 
     // 2️⃣ POTASIO (Se calcula segundo)
@@ -373,7 +469,7 @@ export class HomePage implements OnInit {
       data: rec.Potasio,
       icon: '🍌',
       color: 'tertiary',
-      tipo: 'primario'
+      tipo: 'primario',
     });
 
     // 3️⃣ NITRÓGENO (Se calcula al final con descuentos)
@@ -384,7 +480,7 @@ export class HomePage implements OnInit {
       data: rec.Nitrogeno,
       icon: '🍃',
       color: 'primary',
-      tipo: 'primario'
+      tipo: 'primario',
     });
 
     // 4️⃣ MAGNESIO (Opcional - Solo si existe en la respuesta)
@@ -397,7 +493,7 @@ export class HomePage implements OnInit {
         icon: '🟣',
         color: 'secondary',
         tipo: 'secundario',
-        borderColor: '#9c27b0'
+        borderColor: '#9c27b0',
       });
     }
 
@@ -411,11 +507,16 @@ export class HomePage implements OnInit {
         icon: '🟡',
         color: 'warning',
         tipo: 'secundario',
-        borderColor: '#ffc107'
+        borderColor: '#ffc107',
       });
     }
 
     return nutrientes;
+  }
+
+  editarDatos() {
+    this.resultado = null;
+    this.pasoActual = 1;
   }
 }
 
