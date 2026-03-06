@@ -168,4 +168,58 @@ export class ChacrasService {
       message: 'Cálculo guardado correctamente',
     };
   }
+
+  /**
+   * Actualizar un cálculo existente
+   */
+  async updateCalculo(
+    chacraId: number,
+    calculoId: number,
+    userId: number,
+    nombreMuestra?: string,
+  ) {
+    // Verificar que la chacra pertenece al usuario
+    await this.findOne(chacraId, userId);
+
+    const calculo = await this.calculoRepository.findOne({
+      where: { id: calculoId, chacraId },
+    });
+
+    if (!calculo) {
+      throw new NotFoundException(`Cálculo con ID ${calculoId} no encontrado`);
+    }
+
+    if (nombreMuestra) {
+      calculo.nombreMuestra = nombreMuestra;
+    }
+
+    await this.calculoRepository.save(calculo);
+
+    return {
+      message: 'Cálculo actualizado correctamente',
+      calculo,
+    };
+  }
+
+  /**
+   * Eliminar un cálculo
+   */
+  async deleteCalculo(chacraId: number, calculoId: number, userId: number) {
+    // Verificar que la chacra pertenece al usuario
+    await this.findOne(chacraId, userId);
+
+    const calculo = await this.calculoRepository.findOne({
+      where: { id: calculoId, chacraId },
+    });
+
+    if (!calculo) {
+      throw new NotFoundException(`Cálculo con ID ${calculoId} no encontrado`);
+    }
+
+    await this.calculoRepository.remove(calculo);
+
+    return {
+      message: 'Cálculo eliminado correctamente',
+    };
+  }
 }

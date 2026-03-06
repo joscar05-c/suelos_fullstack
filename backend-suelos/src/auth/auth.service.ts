@@ -1,132 +1,84 @@
 import {
   Injectable,
-  UnauthorizedException,
-  ConflictException,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { JwtService } from '@nestjs/jwt';
-import * as bcrypt from 'bcrypt';
 import { Usuario } from './entities/usuario.entity';
-import { RegisterDto } from './dto/register.dto';
-import { LoginDto } from './dto/login.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(Usuario)
     private readonly usuarioRepository: Repository<Usuario>,
-    private readonly jwtService: JwtService,
   ) {}
 
   /**
-   * Registrar un nuevo usuario
+   * Obtener o crear usuario por UID de Firebase
    */
-  async register(registerDto: RegisterDto) {
-    // Verificar si el email ya existe
-    const existingUser = await this.usuarioRepository.findOne({
-      where: { email: registerDto.email },
-    });
+  async findOrCreateByFirebaseUid(firebaseUid: string, phoneNumber?: string, email?: string) {
+    try {
+      let usuario = await this.usuarioRepository.findOne({
+        where: { firebaseUid },
+      });
 
-    if (existingUser) {
-      throw new ConflictException('El email ya está registrado');
+      if (!usuario) {
+        // Crear nuevo usuario
+        usuario = this.usuarioRepository.create({
+          firebaseUid,
+          telefono: phoneNumber,
+          email: email,
+          nombre: phoneNumber || 'Usuario', // Nombre por defecto
+          activo: true,
+        });
+
+        try {
+          await this.usuarioRepository.save(usuario);
+        } catch (error: any) {
+          // Si falla por duplicado, intentar buscar de nuevo (race condition)
+          if (error.code === '23505') {
+            usuario = await this.usuarioRepository.findOne({
+              where: { firebaseUid },
+            });
+            if (!usuario) {
+              throw error; // Si aún no existe, lanzar el error original
+            }
+          } else {
+            throw error;
+          }
+        }
+      }
+
+      return usuario;
+    } catch (error) {
+      console.error('Error en findOrCreateByFirebaseUid:', error);
+      throw error;
     }
-
-    // Hash de la contraseña
-    const hashedPassword = await bcrypt.hash(registerDto.password, 10);
-
-    // Crear usuario
-    const usuario = this.usuarioRepository.create({
-      email: registerDto.email,
-      password: hashedPassword,
-      nombre: registerDto.nombre,
-      telefono: registerDto.telefono,
-    });
-
-    await this.usuarioRepository.save(usuario);
-
-    // Generar JWT
-    const payload = { sub: usuario.id, email: usuario.email };
-    const token = this.jwtService.sign(payload);
-
-    // Retornar datos sin el password
-    const { password, ...result } = usuario;
-    return {
-      token,
-      user: result,
-    };
   }
 
   /**
-   * Login de usuario
+   * Obtener perfil del usuario por UID de Firebase
    */
-  async login(loginDto: LoginDto) {
-    // Buscar usuario por email
+  async getProfile(firebaseUid: string) {
     const usuario = await this.usuarioRepository.findOne({
-      where: { email: loginDto.email },
-    });
-
-    if (!usuario) {
-      throw new UnauthorizedException('Credenciales inválidas');
-    }
-
-    // Verificar contraseña
-    const isPasswordValid = await bcrypt.compare(
-      loginDto.password,
-      usuario.password,
-    );
-
-    if (!isPasswordValid) {
-      throw new UnauthorizedException('Credenciales inválidas');
-    }
-
-    // Verificar si está activo
-    if (!usuario.activo) {
-      throw new UnauthorizedException('Usuario desactivado');
-    }
-
-    // Generar JWT
-    const payload = { sub: usuario.id, email: usuario.email };
-    const token = this.jwtService.sign(payload);
-
-    // Retornar datos sin el password
-    const { password, ...result } = usuario;
-    return {
-      token,
-      user: result,
-    };
-  }
-
-  /**
-   * Obtener perfil del usuario autenticado
-   */
-  async getProfile(userId: number) {
-    const usuario = await this.usuarioRepository.findOne({
-      where: { id: userId },
-      relations: ['chacras'],
+      where: { firebaseUid },
     });
 
     if (!usuario) {
       throw new NotFoundException('Usuario no encontrado');
     }
 
-    const { password, ...result } = usuario;
-    return result;
+    return usuario;
   }
 
   /**
-   * Validar usuario por ID (usado por JWT Strategy)
+   * Actualizar perfil del usuario
    */
-  async validateUser(userId: number): Promise<Usuario> {
-    const usuario = await this.usuarioRepository.findOne({
-      where: { id: userId, activo: true },
-    });
+  async updateProfile(firebaseUid: string, updateData: Partial<Usuario>) {
+    const usuario = await this.getProfile(firebaseUid);
 
-    if (!usuario) {
-      throw new UnauthorizedException('Usuario no encontrado o desactivado');
-    }
+    Object.assign(usuario, updateData);
 
-    return usuario;
+    return this.usuarioRepository.save(usuario);
   }
 }

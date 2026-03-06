@@ -2,12 +2,16 @@
   <ion-toolbar color="primary">
     <ion-title> Calculadora de Nutrientes del Suelo </ion-title>
     <ion-buttons slot="end">
-      <ion-button *ngIf="isAuthenticated()" (click)="goToDashboard()">
-        <ion-icon name="list-outline" slot="icon-only"></ion-icon>
-      </ion-button>
-      <ion-button *ngIf="!isAuthenticated()" (click)="goToLogin()">
-        <ion-icon name="log-in-outline" slot="icon-only"></ion-icon>
-      </ion-button>
+      @if (isAuthenticated()) {
+        <ion-button (click)="goToDashboard()">
+          <ion-icon name="list-outline" slot="icon-only"></ion-icon>
+        </ion-button>
+      }
+      @if (!isAuthenticated()) {
+        <ion-button (click)="goToLogin()">
+          <ion-icon name="log-in-outline" slot="icon-only"></ion-icon>
+        </ion-button>
+      }
     </ion-buttons>
   </ion-toolbar>
 </ion-header>

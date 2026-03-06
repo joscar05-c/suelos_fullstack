@@ -12,7 +12,7 @@ export const firebaseAuthGuard: CanActivateFn = (route, state) => {
       if (user) {
         return true;
       }
-
+      
       // Redirigir a phone-login
       router.navigate(['/phone-login']);
       return false;

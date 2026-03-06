@@ -1,32 +1,34 @@
 import { Routes } from '@angular/router';
-import { authGuard } from './guards/auth.guard';
+import { firebaseAuthGuard } from './guards/firebase-auth.guard';
 
 export const routes: Routes = [
   {
-    path: 'home',
-    loadComponent: () => import('./home/home.page').then((m) => m.HomePage),
-  },
-  {
     path: '',
-    redirectTo: 'home',
+    redirectTo: 'phone-login',
     pathMatch: 'full',
   },
   {
-    path: 'login',
-    loadComponent: () => import('./pages/login/login.page').then( m => m.LoginPage)
-  },
-  {
-    path: 'register',
-    loadComponent: () => import('./pages/register/register.page').then( m => m.RegisterPage)
+    path: 'phone-login',
+    loadComponent: () => import('./pages/phone-login/phone-login.page').then( m => m.PhoneLoginPage)
   },
   {
     path: 'dashboard',
     loadComponent: () => import('./pages/dashboard/dashboard.page').then( m => m.DashboardPage),
-    canActivate: [authGuard]
+    canActivate: [firebaseAuthGuard]
   },
   {
     path: 'chacra-detalle/:id',
     loadComponent: () => import('./pages/chacra-detalle/chacra-detalle.page').then( m => m.ChacraDetallePage),
-    canActivate: [authGuard]
+    canActivate: [firebaseAuthGuard]
+  },
+  {
+    path: 'calculo-detalle/:chacraId/:calculoId',
+    loadComponent: () => import('./pages/calculo-detalle/calculo-detalle.page').then( m => m.CalculoDetallePage),
+    canActivate: [firebaseAuthGuard]
+  },
+  {
+    path: 'home',
+    loadComponent: () => import('./home/home.page').then( m => m.HomePage),
+    canActivate: [firebaseAuthGuard]
   },
 ];

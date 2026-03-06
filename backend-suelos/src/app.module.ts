@@ -20,7 +20,9 @@ import { ChacrasModule } from './chacras/chacras.module';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
       autoLoadEntities: true,
-      synchronize: true, // ⚠️ Cambiar a false en producción
+      synchronize: process.env.NODE_ENV !== 'production', // Solo en desarrollo
+      // dropSchema eliminado - ya NO borra la BD al iniciar
+      logging: process.env.NODE_ENV === 'development',
     }),
     AuthModule,
     ChacrasModule,

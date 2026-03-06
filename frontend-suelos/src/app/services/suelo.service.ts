@@ -30,8 +30,11 @@ export class SueloService {
     return this.http.post<RespuestaCalculo>(`${this.apiUrl}/calcular-nutrientes`, datos);
   }
 
-  calcularYGuardar(data: CalcularYGuardarDto): Observable<CalcularYGuardarResponse> {
-    return this.http.post<CalcularYGuardarResponse>(`${this.apiUrl}/calcular-y-guardar`, data);
+  calcularYGuardar(chacraId: number, data: { nombreMuestra?: string; datos: SolicitudCalculo }): Observable<CalcularYGuardarResponse> {
+    return this.http.post<CalcularYGuardarResponse>(
+      `${environment.apiUrl}/chacras/${chacraId}/calculos`,
+      data
+    );
   }
 
   getTexturas(): Observable<any[]> {

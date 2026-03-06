@@ -1,27 +1,28 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { Router } from '@angular/router';
 import { IonicModule, AlertController, ToastController } from '@ionic/angular';
-import { AuthService, Usuario } from '../../services/auth.service';
+import { FirebaseAuthService, Usuario } from '../../services/firebase-auth.service';
 import { ChacrasService, Chacra } from '../../services/chacras.service';
+import { addIcons } from 'ionicons';
 import {
-  logOut,
+  logOutOutline,
+  personCircle,
+  addCircle,
   calculator,
   leafOutline,
-  addCircle,
-  personCircle,
-  leaf,
-  personAdd,
-  person,
-
+  location,
+  mapOutline,
+  documentText,
+  trash
 } from 'ionicons/icons';
-import { addIcons } from 'ionicons';
+
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.page.html',
   styleUrls: ['./dashboard.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule]
+  imports: [IonicModule]
 })
 export class DashboardPage implements OnInit {
   usuario: Usuario | null = null;
@@ -29,20 +30,23 @@ export class DashboardPage implements OnInit {
   loading = true;
 
   constructor(
-    private authService: AuthService,
+    private firebaseAuth: FirebaseAuthService,
     private chacrasService: ChacrasService,
     private router: Router,
     private alertController: AlertController,
     private toastController: ToastController
   ) {
+    // Registrar iconos usados en el template
     addIcons({
-      logOut,
+      logOutOutline,
+      personCircle,
+      addCircle,
       calculator,
       leafOutline,
-      addCircle,
-      personCircle,
-      leaf,
-      personAdd,
+      location,
+      mapOutline,
+      documentText,
+      trash
     });
   }
 
@@ -56,7 +60,13 @@ export class DashboardPage implements OnInit {
 
   loadData() {
     this.loading = true;
-    this.usuario = this.authService.getCurrentUser();
+
+    // Suscribirse a los datos del usuario de la app
+    this.firebaseAuth.appUser$.subscribe({
+      next: (user) => {
+        this.usuario = user;
+      }
+    });
 
     this.chacrasService.getChacras().subscribe({
       next: (chacras) => {
@@ -188,9 +198,9 @@ export class DashboardPage implements OnInit {
     });
   }
 
-  logout() {
-    this.authService.logout();
-    this.router.navigate(['/login']);
+  async logout() {
+    await this.firebaseAuth.logout();
+    this.router.navigate(['/phone-login'], { replaceUrl: true });
   }
 
   async showToast(message: string, color: string) {

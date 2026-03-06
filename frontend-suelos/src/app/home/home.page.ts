@@ -38,7 +38,7 @@ import {
   ToastController,
 } from '@ionic/angular/standalone';
 import { SueloService } from '../services/suelo.service';
-import { AuthService } from '../services/auth.service';
+import { FirebaseAuthService } from '../services/firebase-auth.service';
 import { ChacrasService, Chacra } from '../services/chacras.service';
 import { RespuestaCalculo } from '../interfaces/suelo.interface';
 import { forkJoin } from 'rxjs';
@@ -92,7 +92,7 @@ import { IonicModule } from '@ionic/angular';
 export class HomePage implements OnInit {
   private fb = inject(FormBuilder);
   private sueloService = inject(SueloService);
-  private authService = inject(AuthService);
+  private firebaseAuth = inject(FirebaseAuthService);
   private chacrasService = inject(ChacrasService);
   private router = inject(Router);
   private alertController = inject(AlertController);
@@ -109,6 +109,12 @@ export class HomePage implements OnInit {
   listaFosforo: any[] = [];
   listaPotasio: any[] = [];
   listaEnmiendas: any[] = [];
+
+  // Cache para evitar recreación en cada render
+  private _nutrientesCascadaCache: NutrienteCascada[] | null = null;
+
+  // Cache para evitar recreación en cada render
+  private _nutrientesCascadaCache: NutrienteCascada[] | null = null;
 
   vistaResultado: string = 'plan';
 
@@ -243,6 +249,8 @@ export class HomePage implements OnInit {
       this.sueloService.calcularNutrientes(datos).subscribe({
         next: (res) => {
           this.resultado = res;
+          // Limpiar cache cuando hay nuevo resultado
+          this._nutrientesCascadaCache = null;
           this.pasoActual = 0;
           window.scrollTo(0, 0);
           loading.dismiss();
@@ -264,7 +272,11 @@ export class HomePage implements OnInit {
   }
 
   async guardarCalculo() {
-    if (!this.authService.isAuthenticated()) {
+    // Verificar autenticación con Firebase
+    let isAuth = false;
+    this.firebaseAuth.firebaseUser$.subscribe(user => isAuth = !!user).unsubscribe();
+
+    if (!isAuth) {
       const alert = await this.alertController.create({
         header: 'Iniciar Sesión',
         message: 'Debes iniciar sesión para guardar el cálculo',
@@ -276,12 +288,10 @@ export class HomePage implements OnInit {
           {
             text: 'Ir a Login',
             handler: () => {
-              this.router.navigate(['/login'], {
-                queryParams: { returnUrl: '/home' },
-              });
-            },
-          },
-        ],
+              this.router.navigate(['/phone-login']);
+            }
+          }
+        ]
       });
       await alert.present();
       return;
@@ -385,39 +395,41 @@ export class HomePage implements OnInit {
     this.guardando = true;
     const datos = this.formularioSuelo.value;
 
-    this.sueloService
-      .calcularYGuardar({
-        chacraId,
-        nombreMuestra,
-        datos,
-      })
-      .subscribe({
-        next: (response) => {
-          this.guardando = false;
-          this.showToast(`Guardado en ${response.chacraNombre}`, 'success');
-        },
-        error: (error) => {
-          this.guardando = false;
-          console.error('Error al guardar:', error);
-          this.showToast('Error al guardar el cálculo', 'danger');
-        },
-      });
+    this.sueloService.calcularYGuardar(chacraId, {
+      nombreMuestra,
+      datos
+    }).subscribe({
+      next: (response) => {
+        this.guardando = false;
+        this.showToast(`Guardado en ${response.chacraNombre}`, 'success');
+      },
+      error: (error) => {
+        this.guardando = false;
+        console.error('Error al guardar:', error);
+        this.showToast('Error al guardar el cálculo', 'danger');
+      }
+    });
   }
 
   goToLogin() {
-    this.router.navigate(['/login']);
+    this.router.navigate(['/phone-login']);
   }
 
   goToDashboard() {
-    if (this.authService.isAuthenticated()) {
+    let isAuth = false;
+    this.firebaseAuth.firebaseUser$.subscribe(user => isAuth = !!user).unsubscribe();
+
+    if (isAuth) {
       this.router.navigate(['/dashboard']);
     } else {
-      this.router.navigate(['/login']);
+      this.router.navigate(['/phone-login']);
     }
   }
 
   isAuthenticated(): boolean {
-    return this.authService.isAuthenticated();
+    let isAuth = false;
+    this.firebaseAuth.firebaseUser$.subscribe(user => isAuth = !!user).unsubscribe();
+    return isAuth;
   }
 
   async showToast(message: string, color: string) {
@@ -451,6 +463,11 @@ export class HomePage implements OnInit {
 
   // CASCADA VISUAL DINÁMICA: Genera la lista de nutrientes a mostrar
   getNutrientesCascada(): NutrienteCascada[] {
+    // Si ya está en cache y el resultado no ha cambiado, devolver cache
+    if (this._nutrientesCascadaCache && this.resultado) {
+      return this._nutrientesCascadaCache;
+    }
+
     if (!this.resultado?.recomendacion_fertilizacion) {
       return [];
     }
@@ -519,6 +536,8 @@ export class HomePage implements OnInit {
       });
     }
 
+    // Guardar en cache
+    this._nutrientesCascadaCache = nutrientes;
     return nutrientes;
   }
 

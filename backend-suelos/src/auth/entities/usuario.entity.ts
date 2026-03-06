@@ -5,9 +5,9 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  Index,
 } from 'typeorm';
 import { Chacra } from '../../chacras/entities/chacra.entity';
-import { Exclude } from 'class-transformer';
 
 @Entity('usuario')
 export class Usuario {
@@ -15,17 +15,17 @@ export class Usuario {
   id: number;
 
   @Column({ unique: true })
-  email: string;
-
-  @Column()
-  @Exclude() // No exponer el password en las respuestas
-  password: string;
-
-  @Column()
-  nombre: string;
+  @Index()
+  firebaseUid: string;
 
   @Column({ nullable: true })
-  telefono: string;
+  email?: string;
+
+  @Column({ nullable: true })
+  nombre?: string;
+
+  @Column({ nullable: true })
+  telefono?: string;
 
   @Column({ default: true })
   activo: boolean;

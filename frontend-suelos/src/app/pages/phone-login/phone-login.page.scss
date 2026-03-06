@@ -1,0 +1,133 @@
+.login-container {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 3rem;
+
+  .logo {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+  }
+
+  h1 {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--ion-color-success);
+    margin: 0.5rem 0;
+  }
+
+  p {
+    color: var(--ion-color-medium);
+    font-size: 1rem;
+  }
+}
+
+.step-container {
+  margin-bottom: 2rem;
+}
+
+.prefix {
+  margin-right: 0.5rem;
+  color: var(--ion-color-medium);
+  font-weight: 500;
+}
+
+.send-button,
+.verify-button {
+  margin-top: 1.5rem;
+  height: 48px;
+  font-weight: 600;
+
+  ion-spinner {
+    margin-left: 0.5rem;
+  }
+}
+
+.verify-header {
+  text-align: center;
+  margin-bottom: 2rem;
+
+  ion-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+    color: var(--ion-color-dark);
+    margin: 0.5rem 0;
+  }
+
+  p {
+    color: var(--ion-color-medium);
+    margin: 0.5rem 0;
+  }
+
+  strong {
+    color: var(--ion-color-success);
+    font-size: 1.1rem;
+  }
+}
+
+.resend-section {
+  text-align: center;
+  margin-top: 2rem;
+
+  p {
+    color: var(--ion-color-medium);
+    font-size: 0.9rem;
+  }
+}
+
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+// ReCAPTCHA container
+#recaptcha-container {
+  margin: 1rem 0;
+
+  // Ocultar el ReCAPTCHA invisible
+  .grecaptcha-badge {
+    visibility: hidden;
+  }
+}
+
+// Input styles
+ion-item {
+  --border-radius: 8px;
+  --background: #f8f9fa;
+  margin: 1rem 0;
+
+  ion-input {
+    font-size: 1.1rem;
+  }
+}
+
+// Responsive
+@media (max-width: 480px) {
+  .login-container {
+    padding: 1rem 0.5rem;
+  }
+
+  .header .logo {
+    font-size: 3rem;
+  }
+
+  .header h1 {
+    font-size: 1.5rem;
+  }
+}
