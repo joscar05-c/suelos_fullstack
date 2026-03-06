@@ -93,7 +93,7 @@ export class AuthService {
     // Retornar datos sin el password
     const { password, ...result } = usuario;
     return {
-      token,
+      token:this.jwtService.sign(payload),
       user: result,
     };
   }

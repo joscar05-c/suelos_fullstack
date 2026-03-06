@@ -12,7 +12,7 @@ import { Usuario } from './entities/usuario.entity';
     TypeOrmModule.forFeature([Usuario]),
     PassportModule,
     JwtModule.register({
-      secret: process.env.JWT_SECRET || 'tu_clave_secreta_temporal',
+      secret: process.env.JWT_SECRET || 'suelos-secret-key-2025',
       signOptions: { expiresIn: '7d' }, // Token válido por 7 días
     }),
   ],

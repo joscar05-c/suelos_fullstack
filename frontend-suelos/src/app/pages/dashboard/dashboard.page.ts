@@ -4,7 +4,18 @@ import { Router } from '@angular/router';
 import { IonicModule, AlertController, ToastController } from '@ionic/angular';
 import { AuthService, Usuario } from '../../services/auth.service';
 import { ChacrasService, Chacra } from '../../services/chacras.service';
+import {
+  logOut,
+  calculator,
+  leafOutline,
+  addCircle,
+  personCircle,
+  leaf,
+  personAdd,
+  person,
 
+} from 'ionicons/icons';
+import { addIcons } from 'ionicons';
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.page.html',
@@ -23,7 +34,17 @@ export class DashboardPage implements OnInit {
     private router: Router,
     private alertController: AlertController,
     private toastController: ToastController
-  ) {}
+  ) {
+    addIcons({
+      logOut,
+      calculator,
+      leafOutline,
+      addCircle,
+      personCircle,
+      leaf,
+      personAdd,
+    });
+  }
 
   ngOnInit() {
     this.loadData();

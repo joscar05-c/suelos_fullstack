@@ -5,12 +5,15 @@ import {
   FormBuilder,
   FormGroup,
   Validators,
+  FormsModule,
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import {
   LoadingController,
   IonHeader,
   IonRow,
+  IonSegment,
+  IonSegmentButton,
   IonCol,
   IonToolbar,
   IonTitle,
@@ -57,6 +60,7 @@ import { IonicModule } from '@ionic/angular';
   styleUrls: ['home.page.scss'],
   standalone: true,
   imports: [
+    FormsModule,
     IonNote,
     IonCol,
     IonRow,
@@ -81,6 +85,8 @@ import { IonicModule } from '@ionic/angular';
     IonList,
     IonChip,
     IonIcon,
+    IonSegment,
+    IonSegmentButton,
   ],
 })
 export class HomePage implements OnInit {
@@ -103,6 +109,8 @@ export class HomePage implements OnInit {
   listaFosforo: any[] = [];
   listaPotasio: any[] = [];
   listaEnmiendas: any[] = [];
+
+  vistaResultado: string = 'plan';
 
   pasoActual: number = 1; // Para la navegación paso a paso
   siguientePaso() {
@@ -441,7 +449,7 @@ export class HomePage implements OnInit {
     return Object.keys(obj || {});
   }
 
-  // 🚀 CASCADA VISUAL DINÁMICA: Genera la lista de nutrientes a mostrar
+  // CASCADA VISUAL DINÁMICA: Genera la lista de nutrientes a mostrar
   getNutrientesCascada(): NutrienteCascada[] {
     if (!this.resultado?.recomendacion_fertilizacion) {
       return [];
@@ -520,7 +528,7 @@ export class HomePage implements OnInit {
   }
 }
 
-// 📦 Interfaz para la Cascada Visual de Nutrientes
+// Interfaz para la Cascada Visual de Nutrientes
 interface NutrienteCascada {
   numero: string;
   key: string;

@@ -14,8 +14,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: any) {
+    console.log('📦 Payload del token:', payload);
     const user = await this.authService.validateUser(payload.sub);
+    console.log('👤 Usuario encontrado en DB:', user);
     if (!user) {
+      console.log('❌ Validación fallida: No se encontró el usuario');
       throw new UnauthorizedException();
     }
     return { userId: payload.sub, email: payload.email };
