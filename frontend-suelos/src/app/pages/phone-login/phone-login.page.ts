@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
+import { environment } from '../../../environments/environment';
 import { IonicModule, LoadingController, AlertController } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -40,6 +41,7 @@ export class PhoneLoginPage implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    console.log('🚨 CONFIGURACIÓN REAL DE FIREBASE:', environment.firebase);
     // Verificar si ya está autenticado
     this.authSubscription = this.firebaseAuth.firebaseUser$.subscribe(user => {
       if (user) {

@@ -113,9 +113,6 @@ export class HomePage implements OnInit {
   // Cache para evitar recreación en cada render
   private _nutrientesCascadaCache: NutrienteCascada[] | null = null;
 
-  // Cache para evitar recreación en cada render
-  private _nutrientesCascadaCache: NutrienteCascada[] | null = null;
-
   vistaResultado: string = 'plan';
 
   pasoActual: number = 1; // Para la navegación paso a paso

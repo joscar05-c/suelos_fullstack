@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://tu-dominio.com', // Cambia esto por tu URL de producción
+  apiUrl: 'https://api-suelos.gofastdelivery.site',
   firebase: {
     apiKey: "AIzaSyADmuX8iJ4uVa0ZY5iUmGAxuw_HAEB-m8Y",
     authDomain: "analisis-suelos-7b055.firebaseapp.com",
