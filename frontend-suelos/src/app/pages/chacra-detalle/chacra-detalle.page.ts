@@ -3,6 +3,8 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IonicModule, AlertController, ToastController, ModalController } from '@ionic/angular';
 import { ChacrasService, Chacra, CalculoResumen, CalculoDetalle } from '../../services/chacras.service';
+import { addIcons } from 'ionicons';
+import { create, addCircle, time, flask, resize, map, documentText, documentTextOutline, alertCircle, trendingUp } from 'ionicons/icons';
 
 @Component({
   selector: 'app-chacra-detalle',
@@ -24,7 +26,10 @@ export class ChacraDetallePage implements OnInit {
     private chacrasService: ChacrasService,
     private alertController: AlertController,
     private toastController: ToastController
-  ) {}
+  ) {
+    // Registrar iconos usados en el template
+    addIcons({ create, addCircle, time, flask, resize, map, documentText, documentTextOutline, alertCircle, trendingUp });
+  }
 
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
@@ -150,22 +155,7 @@ export class ChacraDetallePage implements OnInit {
   }
 
   async showCalculoDetailModal(calculo: CalculoDetalle) {
-    const alert = await this.alertController.create({
-      header: calculo.nombreMuestra,
-      message: `
-        <div style="text-align: left;">
-          <p><strong>Fecha:</strong> ${new Date(calculo.fecha).toLocaleDateString('es-ES')}</p>
-          <p><strong>pH:</strong> ${calculo.datosEntrada.ph}</p>
-          <p><strong>Meta Rendimiento:</strong> ${calculo.datosEntrada.metaRendimiento} qq/ha</p>
-          <p><strong>Textura:</strong> ${calculo.datosEntrada.textura}</p>
-          <hr>
-          <p><em>Ver calculadora para detalles completos</em></p>
-        </div>
-      `,
-      buttons: ['Cerrar']
-    });
-
-    await alert.present();
+    this.router.navigate(['/calculo-detalle', this.chacraId, calculo.id]);
   }
 
   getFormattedDate(dateString: string): string {

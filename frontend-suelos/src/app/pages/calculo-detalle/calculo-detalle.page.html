@@ -1,0 +1,252 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="success">
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()">
+        <ion-icon name="arrow-back" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{ calculo?.nombreMuestra }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="exportarPDF()">
+        <ion-icon name="download" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  @if (loading) {
+    <div class="loading-container">
+      <ion-spinner name="circles" color="success"></ion-spinner>
+    </div>
+  }
+
+  @if (!loading && calculo) {
+    <div class="calculo-content">
+      <!-- Info General -->
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Información General</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <div class="info-grid">
+            <div class="info-item">
+              <label>Fecha</label>
+              <p>{{ calculo.fecha | date: 'dd/MM/yyyy HH:mm' }}</p>
+            </div>
+            <div class="info-item">
+              <label>Muestra</label>
+              <p>{{ calculo.nombreMuestra }}</p>
+            </div>
+          </div>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- Datos de Entrada -->
+      <ion-card>
+        <ion-card-header color="primary">
+          <ion-card-title>📋 Datos de Entrada</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-list lines="none">
+            <ion-item>
+              <ion-label>
+                <h3>Área (ha)</h3>
+                <p>{{ calculo.datosEntrada.areaHa }}</p>
+              </ion-label>
+            </ion-item>
+            <ion-item>
+              <ion-label>
+                <h3>Profundidad (m)</h3>
+                <p>{{ calculo.datosEntrada.profundidadMetros }}</p>
+              </ion-label>
+            </ion-item>
+            <ion-item>
+              <ion-label>
+                <h3>pH</h3>
+                <p>{{ calculo.datosEntrada.ph }}</p>
+              </ion-label>
+            </ion-item>
+            <ion-item>
+              <ion-label>
+                <h3>Conductividad Eléctrica (dS/m)</h3>
+                <p>{{ calculo.datosEntrada.ce }}</p>
+              </ion-label>
+            </ion-item>
+            <ion-item>
+              <ion-label>
+                <h3>Materia Orgánica (%)</h3>
+                <p>{{ calculo.datosEntrada.materiaOrganica }}</p>
+              </ion-label>
+            </ion-item>
+            <ion-item>
+              <ion-label>
+                <h3>Fósforo (ppm)</h3>
+                <p>{{ calculo.datosEntrada.fosforoPpm }}</p>
+              </ion-label>
+            </ion-item>
+            <ion-item>
+              <ion-label>
+                <h3>Potasio (ppm)</h3>
+                <p>{{ calculo.datosEntrada.potasioPpm }}</p>
+              </ion-label>
+            </ion-item>
+            <ion-item>
+              <ion-label>
+                <h3>Meta de Rendimiento (qq/ha)</h3>
+                <p>{{ calculo.datosEntrada.metaRendimiento }}</p>
+              </ion-label>
+            </ion-item>
+          </ion-list>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- Balance Nutricional -->
+      @if (calculo.resultados.balanceNutricional) {
+        <ion-card>
+          <ion-card-header color="secondary">
+            <ion-card-title>⚖️ Balance Nutricional</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-list>
+              <ion-item>
+                <ion-label>
+                  <h3>Nitrógeno Disponible</h3>
+                  <p>{{ calculo.resultados.nitrogenoDisponibleKg || 0 | number:'1.2-2' }} kg/ha</p>
+                </ion-label>
+              </ion-item>
+              <ion-item>
+                <ion-label>
+                  <h3>Fósforo Disponible</h3>
+                  <p>{{ calculo.resultados.fosforoDisponibleKg || 0 | number:'1.2-2' }} kg/ha</p>
+                </ion-label>
+              </ion-item>
+              <ion-item>
+                <ion-label>
+                  <h3>Potasio Disponible</h3>
+                  <p>{{ calculo.resultados.potasioDisponibleKg || 0 | number:'1.2-2' }} kg/ha</p>
+                </ion-label>
+              </ion-item>
+            </ion-list>
+          </ion-card-content>
+        </ion-card>
+      }
+
+      <!-- Recomendación de Fertilización -->
+      @if (calculo.resultados.recomendacionFertilizacion) {
+        <ion-card>
+          <ion-card-header color="success">
+            <ion-card-title>🌱 Recomendación de Fertilización</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <!-- Nitrógeno -->
+            @if (calculo.resultados.recomendacionFertilizacion.Nitrogeno) {
+              <div class="fertilizante-item">
+                <h3>1️⃣ Nitrógeno (N)</h3>
+                <p><strong>Producto:</strong> {{ calculo.resultados.recomendacionFertilizacion.Nitrogeno.producto }}</p>
+                <p><strong>Cantidad:</strong> {{ calculo.resultados.recomendacionFertilizacion.Nitrogeno.cantidad_kg_ha | number:'1.2-2' }} kg/ha</p>
+                <p><strong>Sacos:</strong> {{ calculo.resultados.recomendacionFertilizacion.Nitrogeno.sacos | number:'1.1-1' }}</p>
+              </div>
+            }
+
+            <!-- Fósforo -->
+            @if (calculo.resultados.recomendacionFertilizacion.Fosforo) {
+              <div class="fertilizante-item">
+                <h3>2️⃣ Fósforo (P₂O₅)</h3>
+                <p><strong>Producto:</strong> {{ calculo.resultados.recomendacionFertilizacion.Fosforo.producto }}</p>
+                <p><strong>Cantidad:</strong> {{ calculo.resultados.recomendacionFertilizacion.Fosforo.cantidad_kg_ha | number:'1.2-2' }} kg/ha</p>
+                <p><strong>Sacos:</strong> {{ calculo.resultados.recomendacionFertilizacion.Fosforo.sacos | number:'1.1-1' }}</p>
+              </div>
+            }
+
+            <!-- Potasio -->
+            @if (calculo.resultados.recomendacionFertilizacion.Potasio) {
+              <div class="fertilizante-item">
+                <h3>3️⃣ Potasio (K₂O)</h3>
+                <p><strong>Producto:</strong> {{ calculo.resultados.recomendacionFertilizacion.Potasio.producto }}</p>
+                <p><strong>Cantidad:</strong> {{ calculo.resultados.recomendacionFertilizacion.Potasio.cantidad_kg_ha | number:'1.2-2' }} kg/ha</p>
+                <p><strong>Sacos:</strong> {{ calculo.resultados.recomendacionFertilizacion.Potasio.sacos | number:'1.1-1' }}</p>
+              </div>
+            }
+          </ion-card-content>
+        </ion-card>
+      }
+
+      <!-- Micronutrientes -->
+      @if (calculo.resultados.micronutrientes) {
+        <ion-card>
+          <ion-card-header color="tertiary">
+            <ion-card-title>🔬 Micronutrientes</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-list>
+              @for (elemento of getKeys(calculo.resultados.micronutrientes); track $index) {
+                <ion-item>
+                  <ion-label>
+                    <h3>{{ elemento }}</h3>
+                    <p>{{ calculo.resultados.micronutrientes[elemento].valor }} ppm</p>
+                    <ion-chip [color]="calculo.resultados.micronutrientes[elemento].diagnostico === 'SUFICIENTE' ? 'success' : 'danger'">
+                      {{ calculo.resultados.micronutrientes[elemento].diagnostico }}
+                    </ion-chip>
+                    <p style="margin-top: 8px;">{{ calculo.resultados.micronutrientes[elemento].recomendacion }}</p>
+                  </ion-label>
+                </ion-item>
+              }
+            </ion-list>
+          </ion-card-content>
+        </ion-card>
+      }
+
+      <!-- Cronograma -->
+      @if (calculo.resultados.cronograma) {
+        <ion-card>
+          <ion-card-header color="warning">
+            <ion-card-title>📅 Cronograma de Aplicación</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            @for (etapa of calculo.resultados.cronograma; track $index) {
+              <div class="cronograma-etapa">
+                <h3>{{ etapa.etapa }}</h3>
+                <p><strong>{{ etapa.momento }}</strong></p>
+                <ion-list>
+                  @for (app of etapa.aplicaciones; track $index) {
+                    <ion-item>
+                      <ion-label>
+                        {{ app.producto }}
+                      </ion-label>
+                      <div slot="end">
+                        <strong>{{ app.dosis_kg | number:'1.1-1' }} kg/ha</strong>
+                        <span>({{ app.sacos | number:'1.1-1' }} sacos)</span>
+                      </div>
+                    </ion-item>
+                  }
+                </ion-list>
+              </div>
+            }
+          </ion-card-content>
+        </ion-card>
+      }
+
+      <!-- Alertas -->
+      @if (calculo.resultados.alertas && calculo.resultados.alertas.length > 0) {
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>⚠️ Alertas</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <div class="alertas-container">
+              @for (alerta of calculo.resultados.alertas; track $index) {
+                <ion-chip [color]="getColorSeveridad(alerta.severidad)">
+                  <ion-icon name="alert-circle"></ion-icon>
+                  <ion-label>
+                    <strong>{{ alerta.parametro }}:</strong> {{ alerta.mensaje }}
+                  </ion-label>
+                </ion-chip>
+              }
+            </div>
+          </ion-card-content>
+        </ion-card>
+      }
+    </div>
+  }
+</ion-content>

@@ -6,13 +6,13 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 
 import { routes } from './app/app.routes';
 import { AppComponent } from './app/app.component';
-import { authInterceptorFn } from './app/interceptors/auth-interceptor.fn';
+import { firebaseInterceptor } from './app/interceptors/firebase-interceptor.fn';
 
 bootstrapApplication(AppComponent, {
   providers: [
-    provideZoneChangeDetection(),{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     provideIonicAngular(),
     provideRouter(routes, withPreloading(PreloadAllModules)),
-    provideHttpClient(withInterceptors([authInterceptorFn])),
+    provideHttpClient(withInterceptors([firebaseInterceptor]))
   ],
 });

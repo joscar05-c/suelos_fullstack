@@ -1,0 +1,113 @@
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.calculo-content {
+  padding: 16px;
+}
+
+ion-card {
+  margin-bottom: 16px;
+
+  ion-card-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+
+  .info-item {
+    label {
+      font-weight: bold;
+      font-size: 0.9rem;
+      color: var(--ion-color-medium);
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    p {
+      margin: 0;
+      font-size: 1.1rem;
+    }
+  }
+}
+
+.fertilizante-item {
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--ion-color-light);
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  h3 {
+    margin-top: 0;
+    margin-bottom: 8px;
+    color: var(--ion-color-success);
+  }
+
+  p {
+    margin: 4px 0;
+  }
+}
+
+.cronograma-etapa {
+  margin-bottom: 20px;
+  padding: 16px;
+  background: var(--ion-color-light);
+  border-radius: 8px;
+
+  h3 {
+    margin-top: 0;
+    margin-bottom: 8px;
+    color: var(--ion-color-warning);
+  }
+
+  ion-list {
+    background: transparent;
+    margin-top: 12px;
+  }
+
+  ion-item {
+    --background: var(--ion-color-light-tint);
+    --border-radius: 4px;
+    margin-bottom: 8px;
+  }
+}
+
+.alertas-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  ion-chip {
+    ion-label {
+      white-space: normal;
+    }
+  }
+}
+
+// Estilos para impresión/PDF
+@media print {
+  ion-header,
+  ion-toolbar {
+    display: none;
+  }
+
+  ion-card {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .calculo-content {
+    padding: 0;
+  }
+}

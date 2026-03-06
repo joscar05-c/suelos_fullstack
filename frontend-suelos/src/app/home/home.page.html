@@ -38,7 +38,7 @@
         <ion-item>
           <ion-label position="stacked">Textura del Suelo</ion-label>
           <ion-select formControlName="idTextura" placeholder="Seleccione...">
-            @for (t of listaTexturas; track t) {
+            @for (t of listaTexturas; track t.id) {
               <ion-select-option [value]="t.id">
                 {{ t.nombre }}
               </ion-select-option>
@@ -48,7 +48,7 @@
         <ion-item>
           <ion-label position="stacked">Zona / Clima</ion-label>
           <ion-select formControlName="idZona" placeholder="Seleccione...">
-            @for (z of listaZonas; track z) {
+            @for (z of listaZonas; track z.id) {
               <ion-select-option [value]="z.id">
                 {{ z.zona }}
               </ion-select-option>
@@ -173,7 +173,7 @@
         <ion-item>
           <ion-label position="stacked">Fuente de Nitrógeno (N)</ion-label>
           <ion-select formControlName="idFuenteN" placeholder="Seleccione...">
-            @for (f of listaNitrogeno; track f) {
+            @for (f of listaNitrogeno; track f.id) {
               <ion-select-option [value]="f.id">{{ f.nombre }}</ion-select-option>
             }
           </ion-select>
@@ -181,7 +181,7 @@
         <ion-item>
           <ion-label position="stacked">Fuente de Fósforo (P)</ion-label>
           <ion-select formControlName="idFuenteP" placeholder="Seleccione...">
-            @for (f of listaFosforo; track f) {
+            @for (f of listaFosforo; track f.id) {
               <ion-select-option [value]="f.id">{{ f.nombre }}</ion-select-option>
             }
           </ion-select>
@@ -189,7 +189,7 @@
         <ion-item>
           <ion-label position="stacked">Fuente de Potasio (K)</ion-label>
           <ion-select formControlName="idFuenteK" placeholder="Seleccione...">
-            @for (f of listaPotasio; track f) {
+            @for (f of listaPotasio; track f.id) {
               <ion-select-option [value]="f.id">{{ f.nombre }}</ion-select-option>
             }
           </ion-select>
@@ -197,7 +197,7 @@
         <ion-item>
           <ion-label position="stacked">Fuente de Enmienda (Ca/Mg)</ion-label>
           <ion-select formControlName="idFuenteCa" placeholder="Seleccione...">
-            @for (e of listaEnmiendas; track e) {
+            @for (e of listaEnmiendas; track e.id) {
               <ion-select-option [value]="e.id">{{ e.nombre }}</ion-select-option>
             }
           </ion-select>
@@ -474,7 +474,7 @@
       </ion-card-header>
       <ion-card-content>
         <ion-list>
-          @for (elemento of getKeys(resultado.micronutrientes); track elemento) {
+          @for (elemento of getKeys(resultado.micronutrientes); track $index) {
             <ion-item>
               <ion-label>
                 <h2><strong>{{ elemento }}</strong> ({{ resultado.micronutrientes![elemento].valor }} ppm)</h2>
@@ -549,7 +549,7 @@
       <ion-card-content>
         <ion-list>
           <!-- 🚀 CASCADA VISUAL DINÁMICA: Itera sobre todos los nutrientes (NPK + Mg + S) -->
-          @for (nutriente of getNutrientesCascada(); track nutriente; let i = $index) {
+          @for (nutriente of getNutrientesCascada(); track $index; let i = $index) {
             <!-- CASO 1: Nutriente con cantidad mayor a 0 (MOSTRAR RECOMENDACIÓN) -->
             @if (nutriente.data.cantidad_kg_ha > 0) {
               <ion-item
@@ -724,7 +724,7 @@
       </ion-card-header>
       <ion-card-content>
         <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-          @for (alerta of resultado.alertas; track alerta) {
+          @for (alerta of resultado.alertas; track $index) {
             <ion-chip
               [color]="getColorSeveridad(alerta.severidad)">
               <strong>{{ alerta.parametro }}:</strong>&nbsp;{{ alerta.mensaje }}
@@ -743,7 +743,7 @@
         <ion-card-subtitle>¿Cuándo aplicar cada producto?</ion-card-subtitle>
       </ion-card-header>
       <ion-card-content>
-        @for (etapa of resultado.cronograma; track etapa) {
+        @for (etapa of resultado.cronograma; track $index) {
           <div class="ion-margin-bottom" style="border-bottom: 1px solid #ddd; padding-bottom: 10px;">
             <h3 style="color: var(--ion-color-tertiary); font-weight: bold; margin-top: 10px;">
               {{ etapa.etapa }}
@@ -752,7 +752,7 @@
               <strong>{{ etapa.momento }}</strong>
             </p>
             <ion-list lines="none">
-              @for (app of etapa.aplicaciones; track app) {
+              @for (app of etapa.aplicaciones; track $index) {
                 <ion-item style="--min-height: 20px; font-size: 0.95em;">
                   <ion-label>
                     {{ app.producto }}

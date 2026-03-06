@@ -19,13 +19,13 @@ export class Usuario {
   firebaseUid: string;
 
   @Column({ nullable: true })
-  email: string;
+  email?: string;
 
   @Column({ nullable: true })
-  nombre: string;
+  nombre?: string;
 
   @Column({ nullable: true })
-  telefono: string;
+  telefono?: string;
 
   @Column({ default: true })
   activo: boolean;

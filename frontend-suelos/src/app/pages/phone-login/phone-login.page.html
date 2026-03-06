@@ -1,0 +1,110 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="success">
+    <ion-title>Iniciar Sesión</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+
+  <div class="login-container">
+    <!-- Logo/Header -->
+    <div class="header">
+      <ion-icon name="leaf" color="success" class="logo"></ion-icon>
+      <h1>SuelosApp</h1>
+      <p>Ingresa con tu número de teléfono</p>
+    </div>
+
+    <!-- Formulario de Teléfono -->
+    <div *ngIf="step === 'phone'" class="step-container">
+      <ion-item>
+        <ion-input
+          type="tel"
+          [(ngModel)]="phoneNumber"
+          placeholder="Ej: 9001234567"
+          maxlength="9"
+          [disabled]="loading">
+          <div slot="start" class="prefix">+51</div>
+        </ion-input>
+      </ion-item>
+
+      <div id="recaptcha-container"></div>
+
+      <ion-button
+        expand="block"
+        color="success"
+        (click)="sendCode()"
+        [disabled]="!isPhoneValid() || loading"
+        class="send-button">
+        <ion-icon name="phone-portrait" slot="start"></ion-icon>
+        {{ loading ? 'Enviando...' : 'Enviar Código' }}
+        <ion-spinner *ngIf="loading" name="circles"></ion-spinner>
+      </ion-button>
+    </div>
+
+    <!-- Formulario de Verificación -->
+    <div *ngIf="step === 'verify'" class="step-container">
+      <div class="verify-header">
+        <ion-icon name="chatbox-ellipses" color="success"></ion-icon>
+        <h2>Código enviado</h2>
+        <p>Ingresa el código de 6 dígitos enviado a:</p>
+        <strong>+51 {{ phoneNumber }}</strong>
+      </div>
+
+      <ion-item>
+        <ion-input
+          type="text"
+          [(ngModel)]="verificationCode"
+          placeholder="123456"
+          maxlength="6"
+          [disabled]="loading"
+          (ionInput)="onCodeInput($event)">
+        </ion-input>
+      </ion-item>
+
+      <!-- Debug info -->
+      <div style="margin: 10px 0; font-size: 12px; color: #666;">
+        Debug: Código="{{verificationCode}}" | Longitud={{verificationCode.length}} | Válido={{isCodeValid()}}
+      </div>
+
+      <ion-button
+        expand="block"
+        color="success"
+        (click)="verifyCode()"
+        [disabled]="!isCodeValid() || loading"
+        class="verify-button">
+        <ion-icon name="checkmark-circle" slot="start"></ion-icon>
+        {{ loading ? 'Verificando...' : 'Verificar Código' }}
+        <ion-spinner *ngIf="loading" name="circles"></ion-spinner>
+      </ion-button>
+
+      <ion-button
+        fill="clear"
+        color="medium"
+        (click)="goBackToPhone()"
+        [disabled]="loading">
+        Cambiar número
+      </ion-button>
+
+      <!-- Reenviar código -->
+      <div class="resend-section">
+        <p *ngIf="countdown > 0">
+          Reenviar código en {{ countdown }}s
+        </p>
+        <ion-button
+          *ngIf="countdown === 0"
+          fill="clear"
+          color="success"
+          (click)="resendCode()"
+          [disabled]="loading">
+          Reenviar código
+        </ion-button>
+      </div>
+    </div>
+
+    <!-- Estado de carga -->
+    <div *ngIf="loading" class="loading-overlay">
+      <ion-spinner name="circles" color="success"></ion-spinner>
+    </div>
+  </div>
+
+</ion-content>

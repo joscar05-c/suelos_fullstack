@@ -52,7 +52,7 @@
   <!-- Lista de chacras -->
   @if (!loading && chacras.length > 0) {
     <ion-list class="chacras-list">
-      @for (chacra of chacras; track chacra) {
+      @for (chacra of chacras; track chacra.id) {
         <ion-item
           button
           (click)="goToChacraDetail(chacra)"

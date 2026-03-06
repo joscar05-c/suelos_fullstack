@@ -15,8 +15,11 @@ import {
 import { ChacrasService } from './chacras.service';
 import { CreateChacraDto } from './dto/create-chacra.dto';
 import { UpdateChacraDto } from './dto/update-chacra.dto';
+import { UpdateCalculoDto } from './dto/update-calculo.dto';
 import { FirebaseAuthGuard } from '../auth/firebase-auth.guard';
 import { AuthService } from '../auth/auth.service';
+import { CalcularYGuardarDto } from './dto/calcular-y-guardar.dto';
+import { CalculoSueloService } from '../calculo-suelo/calculo-suelo.service';
 
 @Controller('chacras')
 @UseGuards(FirebaseAuthGuard)
@@ -24,6 +27,7 @@ export class ChacrasController {
   constructor(
     private readonly chacrasService: ChacrasService,
     private readonly authService: AuthService,
+    private readonly calculoSueloService: CalculoSueloService,
   ) {}
 
   /**
@@ -64,7 +68,12 @@ export class ChacrasController {
    */
   @Get(':id')
   async findOne(@Request() req, @Param('id', ParseIntPipe) id: number) {
-    return this.chacrasService.findOne(id, req.user.userId);
+    const usuario = await this.authService.findOrCreateByFirebaseUid(
+      req.user.uid,
+      req.user.phoneNumber,
+      req.user.email
+    );
+    return this.chacrasService.findOne(id, usuario.id);
   }
 
   /**
@@ -77,7 +86,12 @@ export class ChacrasController {
     @Param('id', ParseIntPipe) id: number,
     @Body() updateChacraDto: UpdateChacraDto,
   ) {
-    return this.chacrasService.update(id, req.user.userId, updateChacraDto);
+    const usuario = await this.authService.findOrCreateByFirebaseUid(
+      req.user.uid,
+      req.user.phoneNumber,
+      req.user.email
+    );
+    return this.chacrasService.update(id, usuario.id, updateChacraDto);
   }
 
   /**
@@ -87,7 +101,12 @@ export class ChacrasController {
   @Delete(':id')
   @HttpCode(HttpStatus.OK)
   async remove(@Request() req, @Param('id', ParseIntPipe) id: number) {
-    return this.chacrasService.remove(id, req.user.userId);
+    const usuario = await this.authService.findOrCreateByFirebaseUid(
+      req.user.uid,
+      req.user.phoneNumber,
+      req.user.email
+    );
+    return this.chacrasService.remove(id, usuario.id);
   }
 
   /**
@@ -96,7 +115,12 @@ export class ChacrasController {
    */
   @Get(':id/calculos')
   async findCalculos(@Request() req, @Param('id', ParseIntPipe) id: number) {
-    return this.chacrasService.findCalculos(id, req.user.userId);
+    const usuario = await this.authService.findOrCreateByFirebaseUid(
+      req.user.uid,
+      req.user.phoneNumber,
+      req.user.email
+    );
+    return this.chacrasService.findCalculos(id, usuario.id);
   }
 
   /**
@@ -109,6 +133,95 @@ export class ChacrasController {
     @Param('id', ParseIntPipe) id: number,
     @Param('calculoId', ParseIntPipe) calculoId: number,
   ) {
-    return this.chacrasService.findCalculo(id, calculoId, req.user.userId);
+    const usuario = await this.authService.findOrCreateByFirebaseUid(
+      req.user.uid,
+      req.user.phoneNumber,
+      req.user.email
+    );
+    return this.chacrasService.findCalculo(id, calculoId, usuario.id);
+  }
+
+  /**
+   * POST /chacras/:id/calculos
+   * Crear un nuevo cálculo para una chacra (calcular y guardar)
+   */
+  @Post(':id/calculos')
+  @HttpCode(HttpStatus.CREATED)
+  async createCalculo(
+    @Request() req,
+    @Param('id', ParseIntPipe) chacraId: number,
+    @Body() dto: CalcularYGuardarDto,
+  ) {
+    const usuario = await this.authService.findOrCreateByFirebaseUid(
+      req.user.uid,
+      req.user.phoneNumber,
+      req.user.email
+    );
+
+    // Verificar que la chacra pertenece al usuario
+    const chacra = await this.chacrasService.findOne(chacraId, usuario.id);
+
+    // Ejecutar el cálculo
+    const resultado = await this.calculoSueloService.calcularNutrientes(dto.datos);
+
+    // Guardar el cálculo en la base de datos
+    const calculoGuardado = await this.chacrasService.saveCalculo(
+      chacraId,
+      usuario.id,
+      dto.nombreMuestra,
+      dto.datos,
+      resultado,
+    );
+
+    return {
+      calculoId: calculoGuardado.calculoId,
+      chacraNombre: chacra.nombre,
+      resultado,
+    };
+  }
+
+  /**
+   * PUT /chacras/:id/calculos/:calculoId
+   * Actualizar un cálculo existente (solo el nombre de muestra por ahora)
+   */
+  @Put(':id/calculos/:calculoId')
+  async updateCalculo(
+    @Request() req,
+    @Param('id', ParseIntPipe) chacraId: number,
+    @Param('calculoId', ParseIntPipe) calculoId: number,
+    @Body() updateCalculoDto: UpdateCalculoDto,
+  ) {
+    const usuario = await this.authService.findOrCreateByFirebaseUid(
+      req.user.uid,
+      req.user.phoneNumber,
+      req.user.email
+    );
+
+    return this.chacrasService.updateCalculo(
+      chacraId,
+      calculoId,
+      usuario.id,
+      updateCalculoDto.nombreMuestra,
+    );
+  }
+
+  /**
+   * DELETE /chacras/:id/calculos/:calculoId
+   * Eliminar un cálculo
+   */
+  @Delete(':id/calculos/:calculoId')
+  @HttpCode(HttpStatus.OK)
+  async deleteCalculo(
+    @Request() req,
+    @Param('id', ParseIntPipe) chacraId: number,
+    @Param('calculoId', ParseIntPipe) calculoId: number,
+  ) {
+    const usuario = await this.authService.findOrCreateByFirebaseUid(
+      req.user.uid,
+      req.user.phoneNumber,
+      req.user.email
+    );
+
+    return this.chacrasService.deleteCalculo(chacraId, calculoId, usuario.id);
   }
 }

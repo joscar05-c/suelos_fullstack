@@ -18,6 +18,7 @@ import { CalculoSueloService } from './calculo-suelo.service';
 import { CalculoSueloController } from './calculo-suelo.controller';
 import { CatalogoController } from './controllers/catalogo.controller';
 import { ChacrasModule } from '../chacras/chacras.module';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
   imports: [
@@ -32,7 +33,7 @@ import { ChacrasModule } from '../chacras/chacras.module';
       FuenteFertilizante,
       EficienciaNutriente,
     ]),
-    ChacrasModule, // Para acceso a ChacrasService
+    AuthModule, // Para acceso a FirebaseAuthGuard en otros módulos
   ],
   controllers: [CalculoSueloController, CatalogoController],
   providers: [
@@ -43,5 +44,6 @@ import { ChacrasModule } from '../chacras/chacras.module';
     EficienciasSeederService,
     CalculoSueloService,
   ],
+  exports: [CalculoSueloService], // Exportar para uso en ChacrasModule
 })
 export class CalculoSueloModule {}
