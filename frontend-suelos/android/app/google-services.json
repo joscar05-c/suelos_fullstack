@@ -1,0 +1,33 @@
+{
+  "project_info": {
+    "project_number": "161685258270",
+    "project_id": "analisis-suelos-7b055",
+    "storage_bucket": "analisis-suelos-7b055.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:161685258270:android:987d705a3c8918ea70ae0f",
+        "android_client_info": {
+          "package_name": "com.suelos.app",
+          "certificate_hash": [
+            "F6FAA6AB7FB46374D33AC17FF6E19D84424B2243",
+            "3217C9F7627627BB11938FC2C90E94E299A4172EF8907B82C3FB4ED54172C6B7"
+          ]
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAhzYbxa14eZR1l7ZF6sHSPPVdciC4U6Hs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
