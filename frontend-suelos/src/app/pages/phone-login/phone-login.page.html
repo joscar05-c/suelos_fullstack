@@ -1,110 +1,149 @@
-<ion-header [translucent]="true">
-  <ion-toolbar color="success">
-    <ion-title>Iniciar Sesión</ion-title>
-  </ion-toolbar>
+<ion-header class="ion-no-border">
+  <ion-toolbar> </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true" class="ion-padding">
-
-  <div class="login-container">
-    <!-- Logo/Header -->
-    <div class="header">
-      <ion-icon name="leaf" color="success" class="logo"></ion-icon>
-      <h1>SuelosApp</h1>
-      <p>Ingresa con tu número de teléfono</p>
+<ion-content [fullscreen]="true" class="bg-fondo-app">
+  <div
+    class="max-w-md mx-auto px-6 py-8 flex flex-col justify-center min-h-full"
+  >
+    <div class="text-center mb-10">
+      <ion-icon
+        name="leaf"
+        class="text-7xl text-hoja mb-3 drop-shadow-sm"
+      ></ion-icon>
+      <h1 class="text-3xl font-bold text-tierra-oscura tracking-tight">
+        AgroSuelos
+      </h1>
+      <p class="text-tierra-base mt-2 text-base">
+        Ingresa con tu número de teléfono
+      </p>
     </div>
 
-    <!-- Formulario de Teléfono -->
-    <div *ngIf="step === 'phone'" class="step-container">
-      <ion-item>
+    <div *ngIf="step === 'phone'" class="animate-fade-in">
+      <ion-item
+        class="rounded-2xl shadow-sm border border-gray-100 mb-6"
+        lines="none"
+      >
+        <div
+          slot="start"
+          class="mr-3 pr-3 border-r border-gray-200 text-tierra-base font-semibold"
+        >
+          +51
+        </div>
         <ion-input
           type="tel"
           [(ngModel)]="phoneNumber"
-          placeholder="Ej: 9001234567"
+          placeholder="9001234567"
           maxlength="9"
-          [disabled]="loading">
-          <div slot="start" class="prefix">+51</div>
+          [disabled]="loading"
+          class="text-lg text-tierra-oscura font-medium"
+        >
         </ion-input>
       </ion-item>
 
-      <div id="recaptcha-container"></div>
+      <div id="recaptcha-container" class="my-2"></div>
 
       <ion-button
         expand="block"
-        color="success"
         (click)="sendCode()"
         [disabled]="!isPhoneValid() || loading"
-        class="send-button">
-        <ion-icon name="phone-portrait" slot="start"></ion-icon>
+        class="h-14 mt-4 text-lg font-bold shadow-md"
+        style="--background: var(--color-hoja); --border-radius: 1rem"
+      >
+        <ion-icon name="phone-portrait" slot="start" class="mr-2"></ion-icon>
         {{ loading ? 'Enviando...' : 'Enviar Código' }}
-        <ion-spinner *ngIf="loading" name="circles"></ion-spinner>
+        <ion-spinner *ngIf="loading" name="crescent" class="ml-2"></ion-spinner>
       </ion-button>
     </div>
 
-    <!-- Formulario de Verificación -->
-    <div *ngIf="step === 'verify'" class="step-container">
-      <div class="verify-header">
-        <ion-icon name="chatbox-ellipses" color="success"></ion-icon>
-        <h2>Código enviado</h2>
-        <p>Ingresa el código de 6 dígitos enviado a:</p>
-        <strong>+51 {{ phoneNumber }}</strong>
+    <div *ngIf="step === 'verify'" class="animate-fade-in text-center">
+      <div class="mb-8">
+        <div
+          class="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-4"
+        >
+          <ion-icon
+            name="chatbox-ellipses"
+            class="text-4xl text-hoja"
+          ></ion-icon>
+        </div>
+        <h2 class="text-2xl font-bold text-tierra-oscura">Revisa tu SMS</h2>
+        <p class="text-gray-500 mt-2">
+          Ingresa el código de 6 dígitos enviado al
+        </p>
+        <p class="text-lg font-bold text-hoja mt-1 tracking-wide">
+          +51 {{ phoneNumber }}
+        </p>
       </div>
 
-      <ion-item>
+      <ion-item
+        class="rounded-2xl shadow-sm border border-gray-100 mb-4"
+        lines="none"
+      >
         <ion-input
           type="text"
           [(ngModel)]="verificationCode"
           placeholder="123456"
           maxlength="6"
           [disabled]="loading"
-          (ionInput)="onCodeInput($event)">
+          (ionInput)="onCodeInput($event)"
+          class="text-3xl text-center tracking-widest text-tierra-oscura font-bold"
+        >
         </ion-input>
       </ion-item>
 
-      <!-- Debug info -->
-      <div style="margin: 10px 0; font-size: 12px; color: #666;">
-        Debug: Código="{{verificationCode}}" | Longitud={{verificationCode.length}} | Válido={{isCodeValid()}}
+      <div class="my-3 text-xs text-gray-400">
+        Debug: Código="{{verificationCode}}" | Válido={{isCodeValid()}}
       </div>
 
       <ion-button
         expand="block"
-        color="success"
         (click)="verifyCode()"
         [disabled]="!isCodeValid() || loading"
-        class="verify-button">
-        <ion-icon name="checkmark-circle" slot="start"></ion-icon>
+        class="h-14 mt-6 text-lg font-bold shadow-md"
+        style="--background: var(--color-hoja); --border-radius: 1rem"
+      >
+        <ion-icon name="checkmark-circle" slot="start" class="mr-2"></ion-icon>
         {{ loading ? 'Verificando...' : 'Verificar Código' }}
-        <ion-spinner *ngIf="loading" name="circles"></ion-spinner>
+        <ion-spinner *ngIf="loading" name="crescent" class="ml-2"></ion-spinner>
       </ion-button>
 
       <ion-button
         fill="clear"
-        color="medium"
         (click)="goBackToPhone()"
-        [disabled]="loading">
+        [disabled]="loading"
+        class="mt-4 text-tierra-base font-medium"
+      >
         Cambiar número
       </ion-button>
 
-      <!-- Reenviar código -->
-      <div class="resend-section">
-        <p *ngIf="countdown > 0">
-          Reenviar código en {{ countdown }}s
+      <div class="mt-8 text-sm">
+        <p *ngIf="countdown > 0" class="text-gray-500">
+          Reenviar código en
+          <span class="font-bold text-tierra-oscura">{{ countdown }}s</span>
         </p>
         <ion-button
           *ngIf="countdown === 0"
           fill="clear"
-          color="success"
           (click)="resendCode()"
-          [disabled]="loading">
+          [disabled]="loading"
+          class="font-bold"
+          style="--color: var(--color-hoja)"
+        >
           Reenviar código
         </ion-button>
       </div>
     </div>
 
-    <!-- Estado de carga -->
-    <div *ngIf="loading" class="loading-overlay">
-      <ion-spinner name="circles" color="success"></ion-spinner>
+    <div
+      *ngIf="loading"
+      class="fixed inset-0 bg-white/70 backdrop-blur-sm flex items-center justify-center z-50 transition-opacity"
+    >
+      <div
+        class="p-6 bg-white rounded-2xl shadow-xl flex flex-col items-center border border-gray-100"
+      >
+        <ion-spinner name="dots" class="text-hoja scale-150 mb-4"></ion-spinner>
+        <p class="text-tierra-oscura font-medium">Procesando...</p>
+      </div>
     </div>
   </div>
-
 </ion-content>

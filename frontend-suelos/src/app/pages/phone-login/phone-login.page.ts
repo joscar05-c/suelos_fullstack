@@ -1,20 +1,29 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
-import { IonicModule, LoadingController, AlertController } from '@ionic/angular';
+import {
+  IonicModule,
+  LoadingController,
+  AlertController,
+} from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FirebaseAuthService } from '../../services/firebase-auth.service';
 import { Subscription } from 'rxjs';
 import { addIcons } from 'ionicons';
-import { leaf, phonePortrait, chatboxEllipses, checkmarkCircle } from 'ionicons/icons';
+import {
+  leaf,
+  phonePortrait,
+  chatboxEllipses,
+  checkmarkCircle,
+} from 'ionicons/icons';
 
 @Component({
   selector: 'app-phone-login',
   templateUrl: './phone-login.page.html',
   styleUrls: ['./phone-login.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule]
+  imports: [IonicModule, CommonModule, FormsModule],
 })
 export class PhoneLoginPage implements OnInit, OnDestroy {
   step: 'phone' | 'verify' = 'phone';
@@ -30,7 +39,7 @@ export class PhoneLoginPage implements OnInit, OnDestroy {
     private router: Router,
     private loadingCtrl: LoadingController,
     private alertCtrl: AlertController,
-    private firebaseAuth: FirebaseAuthService
+    private firebaseAuth: FirebaseAuthService,
   ) {
     // Registrar iconos usados en el template
     addIcons({ leaf, phonePortrait, chatboxEllipses, checkmarkCircle });
@@ -43,12 +52,14 @@ export class PhoneLoginPage implements OnInit, OnDestroy {
   ngOnInit() {
     console.log('🚨 CONFIGURACIÓN REAL DE FIREBASE:', environment.firebase);
     // Verificar si ya está autenticado
-    this.authSubscription = this.firebaseAuth.firebaseUser$.subscribe(user => {
-      if (user) {
-        console.log('✅ Usuario ya autenticado, redirigiendo...');
-        this.router.navigate(['/dashboard'], { replaceUrl: true });
-      }
-    });
+    this.authSubscription = this.firebaseAuth.firebaseUser$.subscribe(
+      (user) => {
+        if (user) {
+          console.log('✅ Usuario ya autenticado, redirigiendo...');
+          this.router.navigate(['/dashboard'], { replaceUrl: true });
+        }
+      },
+    );
 
     // Configurar ReCAPTCHA siguiendo mejores prácticas
     // Se hace después de que la vista esté lista
@@ -81,14 +92,18 @@ export class PhoneLoginPage implements OnInit, OnDestroy {
       length: this.verificationCode?.length,
       isString: typeof this.verificationCode === 'string',
       passes6digits: this.verificationCode?.length === 6,
-      passesRegex: this.verificationCode ? /^[0-9]+$/.test(this.verificationCode) : false
+      passesRegex: this.verificationCode
+        ? /^[0-9]+$/.test(this.verificationCode)
+        : false,
     });
 
     if (!this.verificationCode || typeof this.verificationCode !== 'string') {
       console.log('❌ Código inválido: no es string o está vacío');
       return false;
     }
-    const isValid = this.verificationCode.length === 6 && /^[0-9]+$/.test(this.verificationCode);
+    const isValid =
+      this.verificationCode.length === 6 &&
+      /^[0-9]+$/.test(this.verificationCode);
     console.log('✅ Validación final:', isValid);
     return isValid;
   }
@@ -101,7 +116,12 @@ export class PhoneLoginPage implements OnInit, OnDestroy {
 
   async sendCode() {
     if (!this.isPhoneValid()) {
-      this.showAlert('Error', 'Ingresa un número de teléfono válido de 9 dígitos');
+      // Agregamos 'true' porque es un error de validación
+      this.showAlert(
+        'Error',
+        'Ingresa un número de teléfono válido de 9 dígitos',
+        true,
+      );
       return;
     }
 
@@ -111,10 +131,19 @@ export class PhoneLoginPage implements OnInit, OnDestroy {
       await this.firebaseAuth.sendSMS(this.phoneNumber);
       this.step = 'verify';
       this.startCountdown();
-      this.showAlert('Código Enviado', `Se ha enviado un código de verificación al +51 ${this.phoneNumber}`);
+      // Aquí NO ponemos 'true' porque es un mensaje de éxito
+      this.showAlert(
+        'Código Enviado',
+        `Se ha enviado un código de verificación al +51 ${this.phoneNumber}`,
+      );
     } catch (error: any) {
       console.error('Error al enviar SMS:', error);
-      this.showAlert('Error', error.message || 'No se pudo enviar el código. Intenta nuevamente.');
+      // Agregamos 'true' porque falló el envío de Firebase
+      this.showAlert(
+        'Error',
+        error.message || 'No se pudo enviar el código. Intenta nuevamente.',
+        true,
+      );
     } finally {
       this.loading = false;
     }
@@ -122,7 +151,8 @@ export class PhoneLoginPage implements OnInit, OnDestroy {
 
   async verifyCode() {
     if (!this.isCodeValid()) {
-      this.showAlert('Error', 'Ingresa un código de 6 dígitos');
+      // Es un error
+      this.showAlert('Error', 'Ingresa un código de 6 dígitos', true);
       return;
     }
 
@@ -132,12 +162,16 @@ export class PhoneLoginPage implements OnInit, OnDestroy {
       const success = await this.firebaseAuth.verifyCode(this.verificationCode);
 
       if (success) {
-        // El AuthService se encarga de la redirección automática
         console.log('✅ Verificación exitosa');
       }
     } catch (error: any) {
       console.error('Error al verificar código:', error);
-      this.showAlert('Error', 'Código incorrecto. Verifica e intenta nuevamente.');
+      // Es un error
+      this.showAlert(
+        'Error',
+        'Código incorrecto. Verifica e intenta nuevamente.',
+        true,
+      );
     } finally {
       this.loading = false;
     }
@@ -174,11 +208,17 @@ export class PhoneLoginPage implements OnInit, OnDestroy {
     this.countdown = 0;
   }
 
-  private async showAlert(header: string, message: string) {
+  private async showAlert(
+    header: string,
+    message: string,
+    isError: boolean = false,
+  ) {
     const alert = await this.alertCtrl.create({
       header,
       message,
-      buttons: ['OK']
+      buttons: ['OK'],
+      // Aquí Ionic inyecta la clase CSS a la alerta para que la podamos pintar
+      cssClass: isError ? 'alerta-suelos-error' : 'alerta-suelos-exito',
     });
     await alert.present();
   }

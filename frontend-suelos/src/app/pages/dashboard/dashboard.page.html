@@ -1,94 +1,122 @@
-<ion-header [translucent]="true">
-  <ion-toolbar color="success">
-    <ion-title>Mis Chacras</ion-title>
+<ion-header class="ion-no-border" [translucent]="true">
+  <ion-toolbar style="--background: var(--color-tierra-base); --color: white;">
+    <ion-title class="font-bold tracking-wide text-lg">Mis Parcelas</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="logout()" fill="clear" class="logout-button">
-        <ion-icon name="log-out-outline" slot="icon-only"></ion-icon>
+      <ion-button (click)="logout()" class="active:opacity-70">
+        <ion-icon name="log-out-outline" slot="icon-only" class="text-white"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <!-- Header con info de usuario -->
-  <div class="user-header">
-    <ion-icon name="person-circle" color="success"></ion-icon>
-    <div class="user-info">
-      <h2>{{ usuario?.nombre }}</h2>
-      <p>{{ usuario?.email }}</p>
+<ion-content [fullscreen]="true" class="bg-fondo-app">
+
+  <div class="bg-tierra-base rounded-b-[2.5rem] px-6 pb-12 pt-4 shadow-md">
+    <div class="flex items-center gap-4">
+      <div class="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm border border-white/30 shadow-inner">
+        <ion-icon name="person" class="text-3xl text-white"></ion-icon>
+      </div>
+      <div class="text-white">
+        <p class="text-[11px] font-bold text-white/70 uppercase tracking-widest mb-0.5">Bienvenido de vuelta</p>
+        <h2 class="text-xl font-extrabold">{{ usuario?.nombre || 'Usuario' }}</h2>
+        <p class="text-sm text-white/80 mt-0.5">{{ usuario?.email }}</p>
+      </div>
     </div>
   </div>
 
-  <!-- Botones de acción -->
-  <div class="action-buttons">
-    <ion-button expand="block" (click)="presentAddChacraAlert()" color="success">
-      <ion-icon name="add-circle" slot="start"></ion-icon>
-      Nueva Chacra
-    </ion-button>
+  <div class="px-4 flex gap-3 mb-8 -mt-8 relative z-10">
+    <button (click)="presentAddChacraAlert()" class="flex-1 bg-hoja text-white font-bold py-4 px-4 rounded-2xl shadow-lg shadow-hoja/30 active:scale-95 transition-all duration-150 flex flex-col items-center justify-center gap-1.5">
+      <ion-icon name="add-circle" class="text-3xl"></ion-icon>
+      <span class="text-sm">Nueva Parcela</span>
+    </button>
 
-    <ion-button expand="block" (click)="goToCalculator()" fill="outline" color="success">
-      <ion-icon name="calculator" slot="start"></ion-icon>
-      Ir a Calculadora
-    </ion-button>
+    <button (click)="goToCalculator()" class="flex-1 bg-white text-tierra-oscura font-bold py-4 px-4 rounded-2xl shadow-lg shadow-black/5 border border-gray-100 active:scale-95 transition-all duration-150 flex flex-col items-center justify-center gap-1.5">
+      <ion-icon name="calculator" class="text-3xl text-tierra-base"></ion-icon>
+      <span class="text-sm">Calculadora Rápida</span>
+    </button>
   </div>
 
-  <!-- Loading -->
   @if (loading) {
-    <div class="loading-container">
-      <ion-spinner name="circles" color="success"></ion-spinner>
-      <p>Cargando chacras...</p>
+    <div class="flex flex-col items-center justify-center py-16 animate-fade-in">
+      <ion-spinner name="crescent" class="text-hoja scale-150 mb-6"></ion-spinner>
+      <p class="text-tierra-base font-bold animate-pulse">Cargando tus terrenos...</p>
     </div>
   }
 
-  <!-- Lista vacía -->
   @if (!loading && chacras.length === 0) {
-    <div class="empty-state">
-      <ion-icon name="leaf-outline" color="medium"></ion-icon>
-      <h3>No tienes chacras aún</h3>
-      <p>Crea tu primera chacra para comenzar a guardar análisis de suelo</p>
+    <div class="mx-4 bg-white rounded-[2rem] p-8 text-center shadow-[0_10px_30px_rgba(62,39,35,0.05)] border border-gray-100 animate-fade-in mt-4">
+      <div class="w-24 h-24 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-5 border-4 border-white shadow-sm">
+        <ion-icon name="leaf" class="text-5xl text-hoja opacity-60"></ion-icon>
+      </div>
+      <h3 class="text-xl font-extrabold text-tierra-oscura mb-2">Aún no tienes terrenos</h3>
+      <p class="text-gray-500 text-sm leading-relaxed mb-6">
+        Registra tu primera Parcela para comenzar a guardar el historial de tus análisis de suelo.
+      </p>
+      <button (click)="presentAddChacraAlert()" class="bg-tierra-oscura text-white font-bold py-3.5 px-6 rounded-full shadow-md active:scale-95 transition-all w-full">
+        Crear mi primera Parcela
+      </button>
     </div>
   }
 
-  <!-- Lista de chacras -->
   @if (!loading && chacras.length > 0) {
-    <ion-list class="chacras-list">
-      @for (chacra of chacras; track chacra.id) {
-        <ion-item
-          button
-          (click)="goToChacraDetail(chacra)"
-          detail="true"
-          class="chacra-item"
-          >
-          <ion-icon name="location" slot="start" color="success"></ion-icon>
-          <ion-label>
-            <h2>{{ chacra.nombre }}</h2>
-            <p>{{ chacra.areaHa }} ha</p>
-            @if (chacra.ubicacion) {
-              <p class="ubicacion">
-                <ion-icon name="map-outline"></ion-icon>
-                {{ chacra.ubicacion }}
-              </p>
-            }
-            <div class="stats">
-              <ion-badge color="primary">
-                <ion-icon name="document-text"></ion-icon>
-                {{ chacra.totalCalculos || 0 }} cálculos
-              </ion-badge>
-              <ion-text color="medium" class="last-calc">
-                Último: {{ getFormattedDate(chacra.ultimoCalculo) }}
-              </ion-text>
+    <div class="px-4 pb-12 animate-fade-in">
+
+      <div class="flex justify-between items-end mb-4 px-2">
+        <h3 class="text-lg font-extrabold text-tierra-oscura">Tus Terrenos</h3>
+        <span class="text-[11px] font-bold text-gray-500 bg-gray-200/80 px-2.5 py-1 rounded-md tracking-wider">
+          {{ chacras.length }} EN TOTAL
+        </span>
+      </div>
+
+      <div class="space-y-4">
+        @for (chacra of chacras; track chacra.id) {
+
+          <div class="bg-white rounded-[1.5rem] shadow-[0_8px_20px_rgba(62,39,35,0.04)] p-4 pr-3 border border-gray-100 relative overflow-hidden flex items-center">
+
+            <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-hoja rounded-l-full"></div>
+
+            <div class="flex-1 pl-3 py-1 cursor-pointer active:opacity-70 transition-opacity" (click)="goToChacraDetail(chacra)">
+
+              <h2 class="text-lg font-extrabold text-tierra-oscura leading-tight">{{ chacra.nombre }}</h2>
+
+              <div class="flex flex-wrap gap-x-3 gap-y-1 mt-1.5">
+                <div class="flex items-center gap-1 text-sm text-tierra-base font-medium">
+                  <ion-icon name="resize" class="text-gray-400"></ion-icon>
+                  {{ chacra.areaHa }} ha
+                </div>
+
+                @if (chacra.ubicacion) {
+                  <div class="flex items-center gap-1 text-sm text-gray-500">
+                    <ion-icon name="location" class="text-gray-400"></ion-icon>
+                    <span class="truncate max-w-[140px]">{{ chacra.ubicacion }}</span>
+                  </div>
+                }
+              </div>
+
+              <div class="flex items-center gap-3 mt-3">
+                <span class="bg-green-50 text-hoja text-xs font-bold px-2.5 py-1 rounded-lg flex items-center gap-1 border border-green-100/50">
+                  <ion-icon name="document-text"></ion-icon>
+                  {{ chacra.totalCalculos || 0 }} análisis
+                </span>
+
+                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                  <span class="text-gray-300 mr-1">•</span>
+                  {{ getFormattedDate(chacra.ultimoCalculo) }}
+                </span>
+              </div>
             </div>
-          </ion-label>
-          <ion-button
-            slot="end"
-            fill="clear"
-            color="danger"
-            (click)="confirmDelete(chacra, $event)"
-            >
-            <ion-icon name="trash" slot="icon-only"></ion-icon>
-          </ion-button>
-        </ion-item>
-      }
-    </ion-list>
+
+            <button
+              (click)="confirmDelete(chacra, $event)"
+              class="w-12 h-12 rounded-full bg-red-50 text-arcilla flex items-center justify-center hover:bg-red-100 active:bg-red-200 active:scale-90 transition-all ml-2 shrink-0 border border-red-100">
+              <ion-icon name="trash" class="text-xl"></ion-icon>
+            </button>
+
+          </div>
+
+        }
+      </div>
+    </div>
   }
+
 </ion-content>

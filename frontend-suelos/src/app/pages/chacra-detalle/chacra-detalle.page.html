@@ -1,124 +1,208 @@
-<ion-header [translucent]="true">
-  <ion-toolbar color="success">
+<ion-header class="ion-no-border" [translucent]="true">
+  <ion-toolbar style="--background: var(--color-tierra-base); --color: white">
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/dashboard"></ion-back-button>
+      <ion-back-button
+        defaultHref="/dashboard"
+        text=""
+        class="text-white"
+      ></ion-back-button>
     </ion-buttons>
-    <ion-title>{{ chacra?.nombre }}</ion-title>
+    <ion-title class="font-bold tracking-wide">{{ chacra?.nombre }}</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="presentEditAlert()">
-        <ion-icon name="create" slot="icon-only"></ion-icon>
-      </ion-button>
+      <button
+        (click)="presentEditAlert()"
+        class="bg-white/20 p-2 rounded-full mr-2 active:scale-90 transition-transform"
+      >
+        <ion-icon name="create" class="text-white text-xl"></ion-icon>
+      </button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <!-- Loading -->
+<ion-content [fullscreen]="true" class="bg-fondo-app">
   @if (loading) {
-    <div class="loading-container">
-      <ion-spinner name="circles" color="success"></ion-spinner>
-    </div>
-  }
-
-  <!-- Contenido principal -->
-  @if (!loading && chacra) {
-    <div>
-      <!-- Tarjeta de información -->
-      <ion-card class="info-card">
-        <ion-card-content>
-          <div class="info-row">
-            <ion-icon name="resize" color="primary"></ion-icon>
-            <div>
-              <label>Área</label>
-              <p>{{ chacra.areaHa }} hectáreas</p>
-            </div>
-          </div>
-          @if (chacra.ubicacion) {
-            <div class="info-row">
-              <ion-icon name="map" color="success"></ion-icon>
-              <div>
-                <label>Ubicación</label>
-                <p>{{ chacra.ubicacion }}</p>
-              </div>
-            </div>
-          }
-          @if (chacra.descripcion) {
-            <div class="info-row">
-              <ion-icon name="document-text" color="tertiary"></ion-icon>
-              <div>
-                <label>Descripción</label>
-                <p>{{ chacra.descripcion }}</p>
-              </div>
-            </div>
-          }
-          <div class="stats-row">
-            <div class="stat-item">
-              <ion-badge color="primary">
-                {{ calculos.length }}
-              </ion-badge>
-              <label>Cálculos</label>
-            </div>
-          </div>
-        </ion-card-content>
-      </ion-card>
-      <!-- Botón para nuevo cálculo -->
-      <div class="action-section">
-        <ion-button expand="block" (click)="goToCalculator()" color="success">
-          <ion-icon name="add-circle" slot="start"></ion-icon>
-          Realizar Nuevo Cálculo
-        </ion-button>
-      </div>
-      <!-- Historial de cálculos -->
-      <div class="historial-section">
-        <h2 class="section-title">
-          <ion-icon name="time"></ion-icon>
-          Historial de Cálculos
+  <div class="flex flex-col items-center justify-center py-20 animate-fade-in">
+    <ion-spinner name="crescent" class="text-hoja scale-150 mb-4"></ion-spinner>
+    <p class="text-tierra-base font-medium">Cargando detalles...</p>
+  </div>
+  } @if (!loading && chacra) {
+  <div class="animate-fade-in">
+    <div class="bg-tierra-base rounded-b-[3rem] px-6 pb-10 pt-2 shadow-md">
+      <div class="flex flex-col items-center text-center">
+        <div
+          class="w-20 h-20 bg-white/20 rounded-[2rem] flex items-center justify-center backdrop-blur-md border border-white/30 mb-4 shadow-inner"
+        >
+          <ion-icon name="location" class="text-4xl text-white"></ion-icon>
+        </div>
+        <h2 class="text-2xl font-black text-white leading-tight">
+          {{ chacra.nombre }}
         </h2>
-        <!-- Lista vacía -->
-        @if (calculos.length === 0) {
-          <div class="empty-historial">
-            <ion-icon name="document-text-outline" color="medium"></ion-icon>
-            <p>No hay cálculos registrados</p>
-            <p class="hint">Realiza tu primer análisis de suelo</p>
+
+        <div
+          class="flex items-center gap-2 mt-2 bg-black/10 px-4 py-1.5 rounded-full border border-white/10"
+        >
+          <ion-icon name="resize" class="text-white/70"></ion-icon>
+          <span class="text-white font-bold text-sm"
+            >{{ chacra.areaHa }} Hectáreas</span
+          >
+        </div>
+      </div>
+    </div>
+
+    <div class="px-6 -mt-6">
+      <div
+        class="bg-white rounded-[2rem] p-6 shadow-[0_15px_35px_rgba(62,39,35,0.06)] border border-gray-100"
+      >
+        <div class="grid grid-cols-1 gap-6">
+          @if (chacra.ubicacion) {
+          <div class="flex items-start gap-4">
+            <div
+              class="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center shrink-0"
+            >
+              <ion-icon name="map" class="text-xl text-hoja"></ion-icon>
+            </div>
+            <div>
+              <label
+                class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest"
+                >Ubicación</label
+              >
+              <p class="text-tierra-oscura font-bold leading-tight">
+                {{ chacra.ubicacion }}
+              </p>
+            </div>
           </div>
-        }
-        <!-- Lista de cálculos -->
-        @if (calculos.length > 0) {
-          <ion-list>
-            @for (calculo of calculos; track calculo) {
-              <ion-item
-                button
-                (click)="viewCalculoDetail(calculo)"
-                detail="true"
-                class="calculo-item"
-                >
-                <ion-icon name="flask" slot="start" color="primary"></ion-icon>
-                <ion-label>
-                  <h3>{{ calculo.nombreMuestra }}</h3>
-                  <p>{{ getFormattedDate(calculo.fecha) }}</p>
-                  <div class="calculo-stats">
-                    @if (calculo.metaRendimiento) {
-                      <ion-badge color="medium">
-                        <ion-icon name="trending-up"></ion-icon>
-                        {{ calculo.metaRendimiento }} qq/ha
-                      </ion-badge>
-                    }
-                    @if (calculo.ph) {
-                      <ion-badge color="secondary">
-                        pH: {{ calculo.ph }}
-                      </ion-badge>
-                    }
-                    <ion-badge [color]="getAlertColor(calculo.alertasCount)">
-                      <ion-icon name="alert-circle"></ion-icon>
-                      {{ calculo.alertasCount || 0 }} alertas
-                    </ion-badge>
-                  </div>
-                </ion-label>
-              </ion-item>
-            }
-          </ion-list>
+          } @if (chacra.descripcion) {
+          <div class="flex items-start gap-4">
+            <div
+              class="w-10 h-10 bg-orange-50 rounded-xl flex items-center justify-center shrink-0"
+            >
+              <ion-icon
+                name="document-text"
+                class="text-xl text-arcilla"
+              ></ion-icon>
+            </div>
+            <div>
+              <label
+                class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest"
+                >Descripción / Notas</label
+              >
+              <p class="text-tierra-base text-sm leading-relaxed mt-0.5">
+                {{ chacra.descripcion }}
+              </p>
+            </div>
+          </div>
+          }
+
+          <div class="pt-4 border-t border-gray-50 flex justify-around">
+            <div class="text-center">
+              <p class="text-2xl font-black text-tierra-oscura">
+                {{ calculos.length }}
+              </p>
+              <p
+                class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter"
+              >
+                Cálculos Realizados
+              </p>
+            </div>
+            <div class="w-[1px] bg-gray-100 h-10"></div>
+            <div class="text-center">
+              <p class="text-2xl font-black text-hoja">
+                {{ calculos.length > 0 ?
+                getFormattedDate(calculos[0].fecha).split(' ')[0] : '--' }}
+              </p>
+              <p
+                class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter"
+              >
+                Último Análisis
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="px-6 mt-8">
+      <button
+        (click)="goToCalculator()"
+        class="w-full bg-hoja text-white font-extrabold py-4 rounded-2xl shadow-lg shadow-hoja/30 active:scale-[0.98] transition-all flex items-center justify-center gap-3"
+      >
+        <ion-icon name="add-circle" class="text-2xl"></ion-icon>
+        Realizar Nuevo Análisis
+      </button>
+    </div>
+
+    <div class="px-6 mt-10 pb-12">
+      <div class="flex items-center gap-2 mb-6">
+        <ion-icon name="time" class="text-xl text-tierra-base"></ion-icon>
+        <h3 class="text-lg font-black text-tierra-oscura">
+          Historial de Análisis
+        </h3>
+      </div>
+
+      @if (calculos.length === 0) {
+      <div
+        class="bg-gray-50 border-2 border-dashed border-gray-200 rounded-[2rem] p-10 text-center"
+      >
+        <ion-icon
+          name="flask-outline"
+          class="text-5xl text-gray-300 mb-3"
+        ></ion-icon>
+        <p class="text-gray-500 font-bold">No hay registros aún</p>
+        <p class="text-gray-400 text-xs mt-1">
+          Tus análisis de suelo aparecerán aquí
+        </p>
+      </div>
+      }
+
+      <div class="space-y-4">
+        @for (calculo of calculos; track calculo) {
+        <div
+          (click)="viewCalculoDetail(calculo)"
+          class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex items-center gap-4 active:bg-gray-50 active:scale-[0.99] transition-all"
+        >
+          <div
+            class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center shrink-0 border border-blue-100"
+          >
+            <ion-icon name="flask" class="text-2xl text-blue-500"></ion-icon>
+          </div>
+
+          <div class="flex-1 min-w-0">
+            <h4 class="font-extrabold text-tierra-oscura text-base truncate">
+              {{ calculo.nombreMuestra }}
+            </h4>
+            <p class="text-[11px] font-medium text-gray-400">
+              {{ getFormattedDate(calculo.fecha) }}
+            </p>
+
+            <div class="flex gap-2 mt-2">
+              @if (calculo.ph) {
+              <span
+                class="bg-purple-50 text-purple-600 text-[10px] font-bold px-2 py-0.5 rounded-md border border-purple-100"
+              >
+                pH: {{ calculo.ph }}
+              </span>
+              }
+              <span
+                class="text-[10px] font-bold px-2 py-0.5 rounded-md flex items-center gap-1 border"
+                [ngClass]="(calculo.alertasCount || 0) > 0 ? 'bg-red-50 text-arcilla border-red-100' : 'bg-green-50 text-hoja border-green-100'"
+              >
+                <ion-icon
+                  name="alert-circle"
+                  *ngIf="(calculo.alertasCount || 0) > 0"
+                ></ion-icon>
+                {{ calculo.alertasCount || 0 }} alertas
+              </span>
+            </div>
+          </div>
+
+          <ion-icon
+            name="chevron-forward"
+            class="text-gray-300 text-xl"
+          ></ion-icon>
+        </div>
         }
       </div>
     </div>
+  </div>
   }
 </ion-content>

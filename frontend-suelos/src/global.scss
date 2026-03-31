@@ -8,8 +8,9 @@
  * For more information on global stylesheets, visit the documentation:
  * https://ionicframework.com/docs/layout/global-stylesheets
  */
-
 /* Core CSS required for Ionic components to work properly */
+@import "tailwindcss/theme";
+@import "tailwindcss/utilities";
 @import "@ionic/angular/css/core.css";
 
 /* Basic CSS for apps built with Ionic */
@@ -34,4 +35,179 @@
 
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
-@import '@ionic/angular/css/palettes/dark.system.css';
+@import "@ionic/angular/css/palettes/dark.system.css";
+
+@theme {
+  --color-tierra-oscura: #3e2723;
+  --color-tierra-base: #795548;
+  --color-tierra-clara: #d7ccc8;
+  --color-arcilla: #d84315;
+  --color-hoja: #2e7d32;
+  --color-fondo-app: #f5f5f6;
+
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+}
+
+:root {
+  --ion-background-color: var(--color-fondo-app) !important;
+  --ion-text-color: var(--color-tierra-oscura) !important;
+
+  /* Forzamos que las tarjetas y otros elementos siempre sean blancos */
+  --ion-item-background: #ffffff !important;
+  --ion-card-background: #ffffff !important;
+}
+
+html {
+  color-scheme: light !important;
+}
+
+/* ==========================================================================
+   ESTILOS GLOBALES DE ALERTAS - SUELOS APP (Anti Modo Oscuro)
+   ========================================================================== */
+
+ion-alert.alerta-suelos-exito,
+ion-alert.alerta-suelos-error {
+  /* Forzamos el fondo blanco en las variables de Ionic */
+  --background: #ffffff !important;
+  --backdrop-opacity: 0.6 !important;
+
+  /* Estilizamos la caja principal (wrapper) */
+  &::part(wrapper) {
+    border-radius: var(--radius-2xl, 1.5rem) !important;
+    background: #ffffff !important;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1) !important;
+  }
+
+  /* Forzamos el color del título */
+  &::part(title) {
+    font-weight: 700 !important;
+    font-size: 1.25rem !important;
+    color: var(--color-tierra-oscura, #3e2723) !important;
+  }
+
+  /* Forzamos el color del texto del mensaje */
+  &::part(message) {
+    color: var(--color-tierra-base, #795548) !important;
+    font-size: 1rem !important;
+  }
+}
+
+/* =========================================
+   Variante: ÉXITO (Borde verde y botón verde)
+   ========================================= */
+ion-alert.alerta-suelos-exito {
+  &::part(wrapper) {
+    border-top: 6px solid var(--color-hoja, #2e7d32) !important;
+  }
+
+  &::part(button) {
+    color: var(--color-hoja, #2e7d32) !important;
+    font-weight: 700 !important;
+    text-transform: none !important;
+  }
+}
+
+/* =========================================
+   Variante: ERROR (Borde naranja y botón naranja)
+   ========================================= */
+ion-alert.alerta-suelos-error {
+  &::part(wrapper) {
+    border-top: 6px solid var(--color-arcilla, #d84315) !important;
+  }
+
+  &::part(button) {
+    color: var(--color-arcilla, #d84315) !important;
+    font-weight: 700 !important;
+    text-transform: none !important;
+  }
+}
+
+/* ==========================================================================
+   MODALES DE FORMULARIO (Alert con Inputs)
+   ========================================================================== */
+.alerta-formulario-suelos {
+  --background: #ffffff;
+
+  &::part(wrapper) {
+    border-radius: 2rem !important;
+    border-top: 8px solid var(--color-hoja);
+  }
+
+  .alert-input-group {
+    padding: 10px 15px !important;
+
+    .alert-input {
+      background: #f3f4f6 !important; // Gris muy claro
+      border-radius: 1rem !important;
+      margin-bottom: 10px !important;
+      padding: 12px 16px !important;
+      color: var(--color-tierra-oscura) !important;
+      font-weight: 600 !important;
+      border: 1px solid transparent !important;
+
+      &:focus {
+        border-color: var(--color-hoja) !important;
+        background: #ffffff !important;
+      }
+    }
+  }
+
+  .alert-button-group {
+    padding: 10px 15px 20px !important;
+  }
+
+  .boton-confirmar {
+    background: var(--color-hoja) !important;
+    color: white !important;
+    border-radius: 1rem !important;
+    font-weight: bold !important;
+    margin-left: 10px !important;
+  }
+
+  .boton-cancelar {
+    color: var(--color-tierra-base) !important;
+    font-weight: 600 !important;
+  }
+}
+
+/* ==========================================================================
+   MODALES DE CONFIRMACIÓN (Eliminar)
+   ========================================================================== */
+.alerta-confirmacion-suelos {
+  &::part(wrapper) {
+    border-radius: 2rem !important;
+    border-top: 8px solid var(--color-arcilla);
+  }
+
+  .alert-title {
+    color: var(--color-arcilla) !important;
+    font-weight: 800 !important;
+  }
+
+  .alert-button.attr-destructive {
+    color: var(--color-arcilla) !important;
+    font-weight: bold !important;
+  }
+}
+
+/* ==========================================================================
+   TOASTS (Notificaciones)
+   ========================================================================== */
+.toast-suelos {
+  &::part(container) {
+    border-radius: 1.5rem !important;
+    margin: 0 20px 40px !important; // Separado de los bordes del cel
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+  }
+
+  /* Si el color es success, usamos nuestro verde hoja */
+  &.ion-color-success::part(container) {
+    background: var(--color-hoja) !important;
+  }
+
+  /* Si el color es danger, usamos nuestra arcilla */
+  &.ion-color-danger::part(container) {
+    background: var(--color-arcilla) !important;
+  }
+}
