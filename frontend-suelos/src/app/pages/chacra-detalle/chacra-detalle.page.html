@@ -174,7 +174,15 @@
               {{ getFormattedDate(calculo.fecha) }}
             </p>
 
-            <div class="flex gap-2 mt-2">
+            <div class="flex flex-wrap gap-2 mt-2">
+              @if (calculo.syncStatus === 'PENDING') {
+              <span
+                class="bg-amber-50 text-amber-700 text-[10px] font-bold px-2 py-0.5 rounded-md border border-amber-200 flex items-center gap-1"
+              >
+                <ion-icon name="time"></ion-icon>
+                Local
+              </span>
+              }
               @if (calculo.ph) {
               <span
                 class="bg-purple-50 text-purple-600 text-[10px] font-bold px-2 py-0.5 rounded-md border border-purple-100"
