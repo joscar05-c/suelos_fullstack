@@ -11,9 +11,10 @@ import {
 import { BehaviorSubject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
+import { SupabaseService } from '../core/services/supabase.service';
 
 export interface Usuario {
-  id: number;
+  id: string | number;
   firebaseUid: string;
   telefono?: string;
   email?: string;
@@ -40,7 +41,10 @@ export class FirebaseAuthService {
   private recaptchaVerifier?: RecaptchaVerifier;
   private confirmationResult?: ConfirmationResult;
 
-  constructor(private http: HttpClient) {
+  constructor(
+    private http: HttpClient,
+    private supabaseService: SupabaseService
+  ) {
     // Escuchar cambios en el estado de autenticación de Firebase
     onAuthStateChanged(this.auth, async (user) => {
       console.log('🔥 Firebase auth state changed:', user?.uid);
@@ -215,31 +219,43 @@ export class FirebaseAuthService {
   }
 
   /**
-   * Cargar perfil del usuario desde nuestra API
+   * Cargar y sincronizar perfil del usuario con Supabase
    */
   private async loadUserProfile() {
     try {
       const user = this.auth.currentUser;
       if (!user) return;
 
-      const token = await user.getIdToken();
+      const userData = await this.supabaseService.ensureUserRegistered(
+        user.uid,
+        user.phoneNumber,
+        user.displayName,
+        user.email
+      );
 
-      const response = await fetch(`${this.apiUrl}/profile`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
+      this.appUserSubject.next({
+        id: userData.id,
+        firebaseUid: userData.firebase_uid,
+        telefono: userData.telefono || undefined,
+        email: userData.email || undefined,
+        nombre: userData.nombre || 'Agricultor',
+        activo: userData.activo
       });
-
-      if (response.ok) {
-        const userData = await response.json();
-        this.appUserSubject.next(userData);
-        console.log('✅ Perfil cargado:', userData);
-      } else {
-        console.error('❌ Error al cargar perfil:', response.status);
-      }
+      console.log('✅ Perfil sincronizado con Supabase:', userData);
     } catch (error) {
-      console.error('❌ Error al cargar perfil:', error);
+      console.error('⚠️ Error al sincronizar perfil con Supabase:', error);
+      // Fallback para mantener experiencia de usuario activa
+      const user = this.auth.currentUser;
+      if (user) {
+        this.appUserSubject.next({
+          id: 1,
+          firebaseUid: user.uid,
+          telefono: user.phoneNumber || undefined,
+          email: user.email || undefined,
+          nombre: user.displayName || user.phoneNumber || 'Agricultor',
+          activo: true
+        });
+      }
     }
   }
 
@@ -292,6 +308,13 @@ export class FirebaseAuthService {
    */
   get currentFirebaseUser(): User | null {
     return this.auth.currentUser;
+  }
+
+  /**
+   * Obtener UID del usuario actual
+   */
+  get currentUserUid(): string | null {
+    return this.auth.currentUser?.uid || null;
   }
 
   /**
