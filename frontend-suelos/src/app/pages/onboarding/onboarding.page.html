@@ -1,0 +1,98 @@
+<ion-content [fullscreen]="true" class="bg-gradient-to-b from-[#faf9f6] via-white to-green-50/40">
+
+  <div class="min-h-full flex flex-col justify-between p-6 max-w-md mx-auto">
+
+    <!-- Cabecera con botón Saltar -->
+    <div class="flex items-center justify-between pt-2">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-xl bg-hoja flex items-center justify-center text-white">
+          <ion-icon name="leaf-outline" class="text-lg"></ion-icon>
+        </div>
+        <span class="font-black text-sm text-tierra-oscura">AgroSuelos</span>
+      </div>
+
+      <button
+        (click)="saltar()"
+        class="text-xs font-bold text-gray-400 hover:text-gray-600 px-3 py-1.5 rounded-full active:bg-gray-100 transition-colors">
+        Saltar
+      </button>
+    </div>
+
+    <!-- Contenido del Paso Actual -->
+    <div class="my-auto py-8 text-center space-y-6">
+
+      @for (p of pasos; track p.numero) {
+        @if (pasoActual === p.numero) {
+          <div class="animate-fade-in space-y-6">
+
+            <!-- Ícono Ilustrativo Grande -->
+            <div class="relative w-32 h-32 mx-auto flex items-center justify-center">
+              <div class="absolute inset-0 rounded-full {{ p.fondoIcono }} opacity-60 animate-pulse"></div>
+              <div class="relative w-24 h-24 rounded-full {{ p.fondoIcono }} flex items-center justify-center shadow-inner">
+                <ion-icon [name]="p.icono" class="text-5xl {{ p.colorIcono }}"></ion-icon>
+              </div>
+            </div>
+
+            <!-- Etiqueta / Tag -->
+            <div class="inline-block">
+              <span class="text-[11px] font-extrabold uppercase tracking-widest text-hoja bg-green-50 border border-green-200/80 px-3 py-1 rounded-full">
+                {{ p.etiqueta }}
+              </span>
+            </div>
+
+            <!-- Título -->
+            <h2 class="text-2xl sm:text-3xl font-black text-tierra-oscura leading-tight px-2">
+              {{ p.titulo }}
+            </h2>
+
+            <!-- Descripción -->
+            <p class="text-sm text-gray-600 leading-relaxed max-w-sm mx-auto">
+              {{ p.descripcion }}
+            </p>
+
+          </div>
+        }
+      }
+
+    </div>
+
+    <!-- Pie: Indicadores de Progreso y Botón Siguiente -->
+    <div class="pb-6 space-y-6">
+
+      <!-- Indicadores de Puntos (Dots) -->
+      <div class="flex items-center justify-center gap-2">
+        @for (dot of [1, 2, 3]; track dot) {
+          <div
+            [class.w-7]="pasoActual === dot"
+            [class.bg-hoja]="pasoActual === dot"
+            [class.w-2]="pasoActual !== dot"
+            [class.bg-gray-200]="pasoActual !== dot"
+            class="h-2 rounded-full transition-all duration-300">
+          </div>
+        }
+      </div>
+
+      <!-- Botón de Acción -->
+      <div>
+        @if (pasoActual < 3) {
+          <button
+            (click)="siguiente()"
+            class="w-full bg-tierra-oscura hover:bg-[#2e1c18] text-white font-extrabold text-sm py-4 px-6 rounded-2xl shadow-lg shadow-black/10 active:scale-95 transition-all flex items-center justify-center gap-2">
+            <span>Siguiente</span>
+            <ion-icon name="arrow-forward-outline" class="text-lg"></ion-icon>
+          </button>
+        } @else {
+          <button
+            (click)="finalizarOnboarding()"
+            class="w-full bg-gradient-to-r from-hoja to-emerald-600 hover:from-emerald-600 hover:to-hoja text-white font-black text-sm py-4 px-6 rounded-2xl shadow-xl shadow-hoja/30 active:scale-95 transition-all flex items-center justify-center gap-2">
+            <ion-icon name="sparkles-outline" class="text-lg"></ion-icon>
+            <span>¡Comenzar a Calcular!</span>
+          </button>
+        }
+      </div>
+
+    </div>
+
+  </div>
+
+</ion-content>

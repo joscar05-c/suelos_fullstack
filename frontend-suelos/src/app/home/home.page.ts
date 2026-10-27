@@ -440,7 +440,7 @@ export class HomePage implements OnInit {
     if (this.isAuthenticated()) {
       this.router.navigate(['/dashboard']);
     } else {
-      this.router.navigate(['/landing']);
+      this.router.navigate(['/']);
     }
   }
 

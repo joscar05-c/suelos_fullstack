@@ -5,12 +5,11 @@ import { adminGuard } from './guards/admin.guard';
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'landing',
-    pathMatch: 'full',
+    loadComponent: () => import('./pages/landing/landing.page').then( m => m.LandingPage),
   },
   {
-    path: 'landing',
-    loadComponent: () => import('./pages/landing/landing.page').then( m => m.LandingPage)
+    path: 'onboarding',
+    loadComponent: () => import('./pages/onboarding/onboarding.page').then( m => m.OnboardingPage),
   },
   {
     path: 'phone-login',
