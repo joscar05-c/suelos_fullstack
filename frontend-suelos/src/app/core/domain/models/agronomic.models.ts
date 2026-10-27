@@ -87,6 +87,7 @@ export interface FuenteFertilizante {
 }
 
 export interface DatosEntradaCalculo {
+  cultivo?: string; // Opcional: 'Cafe' | 'Cacao' (default 'Cafe')
   areaHa: number;
   profundidadMetros: number;
   idTextura: number;

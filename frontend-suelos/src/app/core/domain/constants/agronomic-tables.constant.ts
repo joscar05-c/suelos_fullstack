@@ -280,6 +280,78 @@ export const REQUERIMIENTOS_CULTIVO_CAFE: RequerimientoCultivo[] = [
 ];
 
 /**
+ * 8.1. Requerimientos Nutricionales del Cultivo de Cacao (Theobroma cacao L.)
+ * Datos certificados según INIA / ICT (Instituto de Cultivos Tropicales)
+ */
+export const REQUERIMIENTOS_CULTIVO_CACAO: RequerimientoCultivo[] = [
+  {
+    cultivo: 'Cacao',
+    metaQuintales: 10,
+    n: 45,
+    p2o5: 18,
+    k2o: 70,
+    cao: 28,
+    mgo: 15.0,
+    s: 6.0,
+    b: 0.8,
+    cu: 0.5,
+    zn: 1.2,
+    mn: 1.0,
+    fe: 2.0,
+  },
+  {
+    cultivo: 'Cacao',
+    metaQuintales: 20,
+    n: 90,
+    p2o5: 36,
+    k2o: 140,
+    cao: 56,
+    mgo: 30.0,
+    s: 12.0,
+    b: 1.6,
+    cu: 1.0,
+    zn: 2.4,
+    mn: 2.0,
+    fe: 3.5,
+  },
+  {
+    cultivo: 'Cacao',
+    metaQuintales: 30,
+    n: 135,
+    p2o5: 54,
+    k2o: 210,
+    cao: 84,
+    mgo: 45.0,
+    s: 18.0,
+    b: 2.4,
+    cu: 1.5,
+    zn: 3.6,
+    mn: 3.0,
+    fe: 5.0,
+  },
+  {
+    cultivo: 'Cacao',
+    metaQuintales: 40,
+    n: 180,
+    p2o5: 72,
+    k2o: 280,
+    cao: 112,
+    mgo: 60.0,
+    s: 24.0,
+    b: 3.2,
+    cu: 2.0,
+    zn: 4.8,
+    mn: 4.0,
+    fe: 6.5,
+  },
+];
+
+export const REQUERIMIENTOS_CULTIVO_TODOS: RequerimientoCultivo[] = [
+  ...REQUERIMIENTOS_CULTIVO_CAFE,
+  ...REQUERIMIENTOS_CULTIVO_CACAO,
+];
+
+/**
  * 9. Catálogo Completo de 24 Fertilizantes Comerciales, Orgánicos y Enmiendas
  * Datos certificados según Anexo 9-A y 9-B de DOC 1
  */

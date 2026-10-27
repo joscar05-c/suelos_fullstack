@@ -1,4 +1,5 @@
 export interface SolicitudCalculo {
+  cultivo?: string;
   areaHa: number;
   profundidadMetros: number;
   idTextura: number;
