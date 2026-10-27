@@ -1,7 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { SolicitudCalculo, RespuestaCalculo } from '../interfaces/suelo.interface';
+import { SoilCalculationEngine } from '../core/domain/engine/soil-calculation.engine';
 import { environment } from '../../environments/environment';
 
 export interface CalcularYGuardarDto {
@@ -17,60 +18,72 @@ export interface CalcularYGuardarResponse {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class SueloService {
   private http = inject(HttpClient);
 
-  // URL base desde variables de entorno
+  // URL base mantenida temporalmente mientras se completa la migración a Supabase
   private apiUrl = `${environment.apiUrl}/calculo-suelo`;
-  private catalogoUrl = `${environment.apiUrl}/catalogo`;
 
+  /**
+   * ⚡ CÁLCULO AGRONÓMICO OFFLINE / INSTANTÁNEO
+   * Ejecuta el cálculo usando el motor puro SoilCalculationEngine en el dispositivo
+   * sin latencia ni dependencia de servidor o red.
+   */
   calcularNutrientes(datos: SolicitudCalculo): Observable<RespuestaCalculo> {
-    return this.http.post<RespuestaCalculo>(`${this.apiUrl}/calcular-nutrientes`, datos);
+    try {
+      const resultado = SoilCalculationEngine.calcular(datos as any);
+      return of(resultado as unknown as RespuestaCalculo);
+    } catch (error) {
+      console.warn('Fallo en motor local, intentando fallback de red si estuviera disponible:', error);
+      return this.http.post<RespuestaCalculo>(`${this.apiUrl}/calcular-nutrientes`, datos);
+    }
   }
 
-  calcularYGuardar(chacraId: number, data: { nombreMuestra?: string; datos: SolicitudCalculo }): Observable<CalcularYGuardarResponse> {
+  /**
+   * Método de guardado en Chacra
+   * (En el Paso 2/3 se conectará al repositorio local Offline-First y a Supabase)
+   */
+  calcularYGuardar(
+    chacraId: number,
+    data: { nombreMuestra?: string; datos: SolicitudCalculo },
+  ): Observable<CalcularYGuardarResponse> {
     return this.http.post<CalcularYGuardarResponse>(
       `${environment.apiUrl}/chacras/${chacraId}/calculos`,
-      data
+      data,
     );
   }
 
+  // ============================================
+  // CATÁLOGOS LOCALES OFFLINE (0ms de latencia)
+  // ============================================
+
   getTexturas(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.catalogoUrl}/texturas`);
+    return of(SoilCalculationEngine.getTexturas());
   }
 
   getZonas(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.catalogoUrl}/zonas`);
+    return of(SoilCalculationEngine.getZonas());
   }
 
-  // ============================================
-  // MÉTODOS FILTRADOS CON INTELIGENCIA AGRONÓMICA
-  // ============================================
-
-  // Fertilizantes ricos en Nitrógeno (N > 9%)
   getFertilizantesNitrogeno(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.catalogoUrl}/fertilizantes/nitrogeno`);
+    return of(SoilCalculationEngine.getFertilizantesNitrogeno());
   }
 
-  // Fertilizantes ricos en Fósforo (P2O5 > 5%)
   getFertilizantesFosforo(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.catalogoUrl}/fertilizantes/fosforo`);
+    return of(SoilCalculationEngine.getFertilizantesFosforo());
   }
 
-  // Fertilizantes ricos en Potasio (K2O > 15%) - SIN GUANO
   getFertilizantesPotasio(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.catalogoUrl}/fertilizantes/potasio`);
+    return of(SoilCalculationEngine.getFertilizantesPotasio());
   }
 
-  // Enmiendas cálcicas (CaO > 20% o clasificación ENMIENDA)
   getEnmiendas(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.catalogoUrl}/fertilizantes/enmienda`);
+    return of(SoilCalculationEngine.getEnmiendas());
   }
 
-  // Método original sin filtros (por compatibilidad)
   getFertilizantes(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.catalogoUrl}/fertilizantes`);
+    return of(SoilCalculationEngine.getTodosFertilizantes());
   }
 }
