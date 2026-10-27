@@ -261,6 +261,36 @@ export class OfflineStorageService {
     } catch (e) {}
   }
 
+  /**
+   * Elimina un cálculo local específico
+   */
+  deleteLocalCalculo(chacraId: number, calculoId: number): void {
+    try {
+      const raw = localStorage.getItem(this.CALCULOS_KEY);
+      if (!raw) return;
+      let all: LocalCalculo[] = JSON.parse(raw);
+      all = all.filter((c) => Number(c.id) !== Number(calculoId));
+      localStorage.setItem(this.CALCULOS_KEY, JSON.stringify(all));
+
+      this.decrementarConteoChacra(chacraId);
+    } catch (e) {
+      console.error('Error al eliminar cálculo local:', e);
+    }
+  }
+
+  private decrementarConteoChacra(chacraId: number): void {
+    try {
+      const raw = localStorage.getItem(this.CHACRAS_KEY);
+      if (!raw) return;
+      const all: LocalChacra[] = JSON.parse(raw);
+      const target = all.find((c) => Number(c.id) === Number(chacraId));
+      if (target && target.totalCalculos && target.totalCalculos > 0) {
+        target.totalCalculos -= 1;
+        localStorage.setItem(this.CHACRAS_KEY, JSON.stringify(all));
+      }
+    } catch (e) {}
+  }
+
   // ============================================
   // CONSULTA DE REGISTROS PENDIENTES DE SINCRONIZACIÓN
   // ============================================
