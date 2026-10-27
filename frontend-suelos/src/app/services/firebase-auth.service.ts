@@ -9,7 +9,6 @@ import {
   onAuthStateChanged
 } from 'firebase/auth';
 import { BehaviorSubject } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { SupabaseService } from '../core/services/supabase.service';
 
@@ -30,7 +29,6 @@ const firebaseConfig = environment.firebase;
 export class FirebaseAuthService {
   private app = initializeApp(firebaseConfig);
   private auth = getAuth(this.app);
-  private apiUrl = `${environment.apiUrl}/auth`;
 
   private firebaseUserSubject = new BehaviorSubject<User | null>(null);
   private appUserSubject = new BehaviorSubject<Usuario | null>(null);
@@ -42,7 +40,6 @@ export class FirebaseAuthService {
   private confirmationResult?: ConfirmationResult;
 
   constructor(
-    private http: HttpClient,
     private supabaseService: SupabaseService
   ) {
     // Escuchar cambios en el estado de autenticación de Firebase
