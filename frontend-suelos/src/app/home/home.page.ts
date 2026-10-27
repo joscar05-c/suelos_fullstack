@@ -398,7 +398,11 @@ export class HomePage implements OnInit {
     }).subscribe({
       next: (response) => {
         this.guardando = false;
-        this.showToast(`Guardado en ${response.chacraNombre}`, 'success');
+        if (response.syncStatus === 'PENDING') {
+          this.showToast('Guardado localmente en tu dispositivo (Modo Campo)', 'warning');
+        } else {
+          this.showToast('Análisis guardado exitosamente', 'success');
+        }
       },
       error: (error) => {
         this.guardando = false;
