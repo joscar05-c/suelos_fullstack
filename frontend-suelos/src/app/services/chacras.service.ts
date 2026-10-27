@@ -432,4 +432,34 @@ export class ChacrasService {
       })
     );
   }
+
+  /**
+   * Elimina un cálculo específico (localmente y en Supabase si está online)
+   */
+  deleteCalculo(chacraId: number, calculoId: number): Observable<{ message: string }> {
+    // Siempre eliminar del almacenamiento local
+    this.offlineStorage.deleteLocalCalculo(chacraId, calculoId);
+
+    // Si es cálculo temporal offline, terminar
+    if (calculoId < 0 || !this.isOnline) {
+      return of({ message: 'Cálculo local eliminado correctamente' });
+    }
+
+    return from(
+      this.supabase.client
+        .from('calculos_suelo')
+        .delete()
+        .eq('id', calculoId)
+        .eq('chacra_id', chacraId)
+    ).pipe(
+      map(({ error }) => {
+        if (error) throw error;
+        return { message: 'Cálculo eliminado correctamente de la nube' };
+      }),
+      catchError((err) => {
+        console.warn(`[ChacrasService] Error al eliminar cálculo ${calculoId} en Supabase:`, err);
+        return of({ message: 'Cálculo eliminado localmente' });
+      })
+    );
+  }
 }
