@@ -102,7 +102,9 @@ export class HomePage implements OnInit {
   resultado: RespuestaCalculo | null = null;
   guardando = false;
 
-  // Listas cargadas dinámicamente desde el Backend
+  // Listas cargadas dinámicamente desde Supabase o Caché local
+  listaCultivos: any[] = [];
+  metasDisponibles: number[] = [10, 20, 30, 40, 50, 60];
   listaTexturas: any[] = [];
   listaZonas: any[] = [];
   listaNitrogeno: any[] = [];
@@ -142,6 +144,7 @@ export class HomePage implements OnInit {
 
     // Valores por defecto del ejercicio de la Foto para probar rápido
     this.formularioSuelo = this.fb.group({
+      cultivo: ['Cafe', [Validators.required]], // Nuevo: soporte multi-cultivo
       areaHa: [1, [Validators.required, Validators.min(0)]],
       profundidadMetros: [0.15, [Validators.required, Validators.min(0)]],
       idTextura: [4, [Validators.required]], // Franco Arcilloso
@@ -175,39 +178,60 @@ export class HomePage implements OnInit {
   }
 
   ngOnInit() {
-    // Cargar datos maestros desde el backend
     this.cargarCatalogos();
   }
 
   cargarCatalogos() {
+    // Sincronizar catálogos desde Supabase si hay red, luego refrescar listas
+    this.sueloService.syncCatalogosFromSupabase().subscribe({
+      next: () => this.actualizarListasCatalogos(),
+      error: () => this.actualizarListasCatalogos(),
+    });
+  }
+
+  actualizarListasCatalogos() {
     forkJoin({
+      cultivos: this.sueloService.getCultivos(),
       texturas: this.sueloService.getTexturas(),
       zonas: this.sueloService.getZonas(),
-      // ✅ USAR ENDPOINTS FILTRADOS CON INTELIGENCIA AGRONÓMICA
       nitrogeno: this.sueloService.getFertilizantesNitrogeno(),
       fosforo: this.sueloService.getFertilizantesFosforo(),
       potasio: this.sueloService.getFertilizantesPotasio(),
       enmiendas: this.sueloService.getEnmiendas(),
     }).subscribe({
       next: (catalogos) => {
-        // Asignar texturas y zonas directamente
+        this.listaCultivos = catalogos.cultivos;
         this.listaTexturas = catalogos.texturas;
         this.listaZonas = catalogos.zonas;
+        this.listaNitrogeno = catalogos.nitrogeno;
+        this.listaFosforo = catalogos.fosforo;
+        this.listaPotasio = catalogos.potasio;
+        this.listaEnmiendas = catalogos.enmiendas;
 
-        // ✅ ASIGNAR LISTAS YA FILTRADAS POR EL BACKEND
-        // Ya no necesitamos filtrar en el frontend porque el backend lo hace
-        this.listaNitrogeno = catalogos.nitrogeno; // Solo N > 9%
-        this.listaFosforo = catalogos.fosforo; // Solo P2O5 > 5%
-        this.listaPotasio = catalogos.potasio; // Solo K2O > 15% (SIN GUANO)
-        this.listaEnmiendas = catalogos.enmiendas; // Solo CaO > 20% o ENMIENDA
+        const cultivoActual = this.formularioSuelo.get('cultivo')?.value || 'Cafe';
+        this.onCultivoChange(cultivoActual);
       },
       error: (err) => {
         console.error('Error cargando catálogos', err);
-        alert(
-          'Error al cargar los datos maestros del servidor. Verifica la conexión.',
-        );
       },
     });
+  }
+
+  onCultivoChange(cultivoId: string) {
+    const cultivo = this.listaCultivos.find(
+      (c) => c.id.toLowerCase() === (cultivoId || 'cafe').toLowerCase()
+    );
+    if (cultivo && cultivo.metas && cultivo.metas.length > 0) {
+      this.metasDisponibles = cultivo.metas;
+      const metaActual = this.formularioSuelo.get('metaRendimiento')?.value;
+      if (!this.metasDisponibles.includes(metaActual)) {
+        this.formularioSuelo.get('metaRendimiento')?.setValue(this.metasDisponibles[this.metasDisponibles.length - 1]);
+      }
+    }
+  }
+
+  seleccionarMeta(meta: number) {
+    this.formularioSuelo.get('metaRendimiento')?.setValue(meta);
   }
 
   async calcular() {

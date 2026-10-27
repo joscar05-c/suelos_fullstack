@@ -38,6 +38,16 @@
         </div>
         <div class="p-6 space-y-6">
           <div class="space-y-2">
+            <label class="block text-sm font-bold text-tierra-base ml-1">Cultivo a Fertilizar</label>
+            <div class="relative bg-gray-50 rounded-2xl focus-within:bg-white focus-within:ring-2 focus-within:ring-hoja/20 transition-all border border-transparent focus-within:border-hoja/30">
+              <ion-item lines="none" class="bg-transparent rounded-2xl" style="--background: transparent;">
+                <ion-select formControlName="cultivo" (ionChange)="onCultivoChange($event.detail.value)" placeholder="Seleccione cultivo..." class="font-bold text-lg text-tierra-oscura w-full" interface="action-sheet">
+                  <ion-select-option *ngFor="let c of listaCultivos" [value]="c.id">{{ c.nombre }}</ion-select-option>
+                </ion-select>
+              </ion-item>
+            </div>
+          </div>
+          <div class="space-y-2">
             <label class="block text-sm font-bold text-tierra-base ml-1">Área (Hectáreas)</label>
             <div class="relative bg-gray-50 rounded-2xl focus-within:bg-white focus-within:ring-2 focus-within:ring-hoja/20 transition-all border border-transparent focus-within:border-hoja/30">
               <ion-item lines="none" class="bg-transparent rounded-2xl" style="--background: transparent;">
@@ -255,8 +265,20 @@
             <label class="block text-sm font-bold text-tierra-base ml-1 text-center">Meta de Rendimiento (qq/ha)</label>
             <div class="relative bg-gray-50 rounded-2xl focus-within:bg-white focus-within:ring-2 focus-within:ring-hoja/20 transition-all border border-transparent focus-within:border-hoja/30 mt-2">
               <ion-item lines="none" class="bg-transparent rounded-2xl" style="--background: transparent;">
-                <ion-input type="number" formControlName="metaRendimiento" placeholder="20, 30, 40, 50 o 60" class="font-black text-3xl text-tierra-oscura text-center py-4"></ion-input>
+                <ion-input type="number" formControlName="metaRendimiento" placeholder="20, 30, 40..." class="font-black text-3xl text-tierra-oscura text-center py-4"></ion-input>
               </ion-item>
+            </div>
+
+            <div class="flex flex-wrap gap-2 justify-center pt-3">
+              @for (m of metasDisponibles; track m) {
+                <button
+                  type="button"
+                  (click)="seleccionarMeta(m)"
+                  [ngClass]="formularioSuelo.get('metaRendimiento')?.value === m ? 'bg-hoja text-white shadow-md scale-105' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
+                  class="px-4 py-2 rounded-xl font-bold text-sm transition-all active:scale-95">
+                  {{ m }} qq/ha
+                </button>
+              }
             </div>
           </div>
         </div>
