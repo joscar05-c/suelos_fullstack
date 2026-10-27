@@ -1,0 +1,202 @@
+<ion-header class="ion-no-border" [translucent]="true">
+  <ion-toolbar style="--background: var(--color-tierra-base); --color: white;">
+    <ion-buttons slot="start">
+      <ion-button (click)="volver()" class="active:opacity-70">
+        <ion-icon name="arrow-back-outline" slot="icon-only" class="text-white"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title class="font-bold tracking-wide text-lg">Política de Privacidad</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="bg-[#f8f9fa]">
+
+  <main class="max-w-3xl mx-auto px-4 py-8 space-y-6 text-gray-800">
+
+    <!-- Tarjeta Principal / Encabezado -->
+    <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-gray-100 space-y-4">
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-hoja flex items-center justify-center text-2xl font-bold">
+          <ion-icon name="shield-checkmark-outline"></ion-icon>
+        </div>
+        <div>
+          <h1 class="text-xl sm:text-2xl font-black text-tierra-oscura">Política de Privacidad</h1>
+          <p class="text-xs text-gray-500 mt-0.5">
+            Aplicación: <strong>AgroSuelos</strong> (com.suelos.app) • Actualizado: {{ fechaActualizacion }}
+          </p>
+        </div>
+      </div>
+
+      <p class="text-xs sm:text-sm text-gray-600 leading-relaxed pt-2 border-t border-gray-100">
+        En <strong>AgroSuelos</strong> nos tomamos muy en serio la confidencialidad y protección de los datos de los productores, técnicos y profesionales agrícolas. Esta Política de Privacidad describe de manera transparente qué información recopilamos, cómo se utiliza, cómo se almacena de forma segura y cómo puedes ejercer tus derechos sobre tus datos, en estricto cumplimiento con las directrices de <strong>Google Play Store</strong>.
+      </p>
+    </div>
+
+    <!-- 1. Información que Recopilamos -->
+    <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-gray-100 space-y-4">
+      <div class="flex items-center gap-2.5 text-tierra-base">
+        <ion-icon name="document-text-outline" class="text-xl"></ion-icon>
+        <h2 class="text-base font-extrabold text-tierra-oscura uppercase tracking-wider text-xs">1. Información que Recopilamos</h2>
+      </div>
+
+      <p class="text-xs sm:text-sm text-gray-600 leading-relaxed">
+        AgroSuelos únicamente recopila los datos estrictamente necesarios para prestar el servicio agronómico:
+      </p>
+
+      <ul class="space-y-3 text-xs sm:text-sm text-gray-700">
+        <li class="flex items-start gap-2.5">
+          <ion-icon name="checkmark-circle-outline" class="text-base text-hoja shrink-0 mt-0.5"></ion-icon>
+          <div>
+            <strong>Número de Teléfono Móvil:</strong> Se utiliza exclusivamente para la autenticación e inicio de sesión seguro mediante código SMS (One-Time Password) vía <em>Google Firebase Phone Authentication</em>.
+          </div>
+        </li>
+        <li class="flex items-start gap-2.5">
+          <ion-icon name="checkmark-circle-outline" class="text-base text-hoja shrink-0 mt-0.5"></ion-icon>
+          <div>
+            <strong>Perfil Básico del Productor:</strong> Nombre o alias del agricultor (opcional) y correo electrónico (opcional, en caso de asociarlo).
+          </div>
+        </li>
+        <li class="flex items-start gap-2.5">
+          <ion-icon name="checkmark-circle-outline" class="text-base text-hoja shrink-0 mt-0.5"></ion-icon>
+          <div>
+            <strong>Datos de Parcelas y Terrenos Agrícolas:</strong> Nombre del lote o parcela, área en hectáreas y ubicación o referencia geográfica que el propio usuario ingresa.
+          </div>
+        </li>
+        <li class="flex items-start gap-2.5">
+          <ion-icon name="checkmark-circle-outline" class="text-base text-hoja shrink-0 mt-0.5"></ion-icon>
+          <div>
+            <strong>Parámetros de Análisis de Suelo:</strong> Resultados fisicoquímicos (pH, conductividad eléctrica, materia orgánica, fósforo, potasio, calcio, magnesio, acidez cambiable y micronutrientes) ingresados para el cálculo de fertilización.
+          </div>
+        </li>
+      </ul>
+
+      <div class="p-3.5 bg-amber-50 rounded-2xl border border-amber-200/80 text-xs text-amber-900 font-medium">
+        🛡️ <strong>Lo que NUNCA recopilamos:</strong> No solicitamos datos de tarjetas bancarias, contraseñas sensibles, acceso a tu lista de contactos, micrófonos ni archivos personales privados.
+      </div>
+    </div>
+
+    <!-- 2. Finalidad del Tratamiento -->
+    <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-gray-100 space-y-4">
+      <div class="flex items-center gap-2.5 text-tierra-base">
+        <ion-icon name="lock-closed-outline" class="text-xl"></ion-icon>
+        <h2 class="text-base font-extrabold text-tierra-oscura uppercase tracking-wider text-xs">2. Finalidad del Tratamiento de Datos</h2>
+      </div>
+
+      <p class="text-xs sm:text-sm text-gray-600 leading-relaxed">
+        Los datos recopilados son procesados exclusivamente para:
+      </p>
+
+      <ul class="list-disc pl-5 space-y-1.5 text-xs sm:text-sm text-gray-700">
+        <li>Ejecutar el motor de cálculo agronómico con base en metodologías certificadas (UNALM y JNC/INIA).</li>
+        <li>Generar recomendaciones precisas de dosis por hectárea, número de sacos comerciales de 50 kg y gramos por planta.</li>
+        <li>Permitir al usuario guardar su historial de parcelas y análisis agronómicos para dar seguimiento en campañas agrícolas futuras.</li>
+        <li>Identificar la sesión del usuario para garantizar que solo él tenga acceso a sus parcelas y análisis.</li>
+      </ul>
+
+      <p class="text-xs text-gray-500 font-semibold">
+        No vendemos, alquilamos ni compartimos la información de nuestros usuarios con terceros con fines publicitarios ni de telemarketing.
+      </p>
+    </div>
+
+    <!-- 3. Funcionamiento Offline y Almacenamiento Local -->
+    <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-gray-100 space-y-4">
+      <div class="flex items-center gap-2.5 text-tierra-base">
+        <ion-icon name="cloud-offline-outline" class="text-xl"></ion-icon>
+        <h2 class="text-base font-extrabold text-tierra-oscura uppercase tracking-wider text-xs">3. Funcionamiento Sin Conexión (Modo Campo)</h2>
+      </div>
+
+      <p class="text-xs sm:text-sm text-gray-600 leading-relaxed">
+        Para garantizar la operatividad de los productores en zonas remotas sin señal telefónica ni internet, <strong>AgroSuelos almacena localmente</strong> en la memoria segura del dispositivo los catálogos agronómicos y los registros temporales. Cuando el dispositivo vuelve a tener conexión a internet, los registros pendientes se sincronizan de manera diferida con la base de datos central.
+      </p>
+    </div>
+
+    <!-- 4. Terceros y Proveedores de Infraestructura -->
+    <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-gray-100 space-y-4">
+      <div class="flex items-center gap-2.5 text-tierra-base">
+        <ion-icon name="server-outline" class="text-xl"></ion-icon>
+        <h2 class="text-base font-extrabold text-tierra-oscura uppercase tracking-wider text-xs">4. Proveedores de Infraestructura y Terceros</h2>
+      </div>
+
+      <p class="text-xs sm:text-sm text-gray-600 leading-relaxed">
+        La aplicación se apoya en proveedores de nube líderes con certificaciones internacionales de seguridad:
+      </p>
+
+      <div class="space-y-3 text-xs sm:text-sm text-gray-700">
+        <div class="p-3 bg-gray-50 rounded-2xl border border-gray-100">
+          <strong class="text-tierra-oscura">Google Firebase (Google LLC):</strong>
+          <p class="text-xs text-gray-600 mt-1">
+            Utilizado para la autenticación por número telefónico y prevención de abuso (SafetyNet / reCAPTCHA). Puedes consultar la política de Google en: <em>https://policies.google.com/privacy</em>.
+          </p>
+        </div>
+
+        <div class="p-3 bg-gray-50 rounded-2xl border border-gray-100">
+          <strong class="text-tierra-oscura">Supabase (Supabase Inc.):</strong>
+          <p class="text-xs text-gray-600 mt-1">
+            Infraestructura de base de datos PostgreSQL en la nube con cifrado en reposo y en tránsito (SSL/TLS). Cada usuario tiene acceso segregado a través de políticas <em>Row Level Security (RLS)</em>.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. Eliminación de Datos y Derechos del Usuario -->
+    <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-gray-100 space-y-4">
+      <div class="flex items-center gap-2.5 text-tierra-base">
+        <ion-icon name="trash-outline" class="text-xl"></ion-icon>
+        <h2 class="text-base font-extrabold text-tierra-oscura uppercase tracking-wider text-xs">5. Eliminación de Datos y Derechos de los Usuarios</h2>
+      </div>
+
+      <p class="text-xs sm:text-sm text-gray-600 leading-relaxed">
+        En cumplimiento con las políticas de Google Play sobre retención y eliminación de cuentas y datos:
+      </p>
+
+      <ul class="space-y-2 text-xs sm:text-sm text-gray-700">
+        <li class="flex items-start gap-2">
+          <span class="font-bold text-hoja">•</span>
+          <span><strong>Eliminación de Análisis y Parcelas:</strong> Puedes eliminar cualquiera de tus análisis o parcelas directamente desde la aplicación pulsando el botón de eliminar. La eliminación es permanente.</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <span class="font-bold text-hoja">•</span>
+          <span><strong>Eliminación Total de Cuenta:</strong> Si deseas eliminar por completo tu cuenta y todos los registros asociados de nuestros servidores, puedes solicitarlo enviando un mensaje a nuestro correo de soporte o desde tu perfil en la app. Tus datos serán borrados en un plazo máximo de 7 días hábiles.</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- 6. Privacidad de Menores -->
+    <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-gray-100 space-y-3">
+      <h2 class="text-base font-extrabold text-tierra-oscura uppercase tracking-wider text-xs">6. Privacidad de Menores de Edad</h2>
+      <p class="text-xs sm:text-sm text-gray-600 leading-relaxed">
+        Nuestros servicios están dirigidos a productores agrícolas, técnicos y profesionales mayores de 18 años. No recopilamos a sabiendas información de identificación personal de niños o menores de 13 años.
+      </p>
+    </div>
+
+    <!-- 7. Contacto de Privacidad -->
+    <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-gray-100 space-y-4">
+      <div class="flex items-center gap-2.5 text-tierra-base">
+        <ion-icon name="mail-outline" class="text-xl"></ion-icon>
+        <h2 class="text-base font-extrabold text-tierra-oscura uppercase tracking-wider text-xs">7. Contacto para Dudas o Ejercicio de Derechos</h2>
+      </div>
+
+      <p class="text-xs sm:text-sm text-gray-600 leading-relaxed">
+        Si tienes preguntas sobre esta Política de Privacidad o deseas solicitar la revocación o eliminación de tus datos, contáctanos a:
+      </p>
+
+      <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <p class="text-xs font-bold text-gray-500 uppercase">Correo de Soporte y Privacidad</p>
+          <p class="text-sm font-extrabold text-hoja">contacto&#64;agrosuelos.app</p>
+        </div>
+        <button
+          (click)="volver()"
+          class="bg-tierra-oscura text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow active:scale-95 transition-all">
+          Volver a la App
+        </button>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="text-center py-6 text-xs text-gray-400">
+    AgroSuelos © 2026 • Todos los derechos reservados
+  </footer>
+
+</ion-content>

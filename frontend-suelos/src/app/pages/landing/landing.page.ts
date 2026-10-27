@@ -108,4 +108,8 @@ export class LandingPage implements OnInit {
   verOnboarding() {
     this.router.navigate(['/onboarding']);
   }
+
+  irAPrivacidad() {
+    this.router.navigate(['/privacidad']);
+  }
 }

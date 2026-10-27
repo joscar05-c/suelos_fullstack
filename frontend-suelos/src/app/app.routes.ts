@@ -39,4 +39,13 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/admin/admin.page').then( m => m.AdminPage),
     canActivate: [firebaseAuthGuard, adminGuard]
   },
+  {
+    path: 'privacidad',
+    loadComponent: () => import('./pages/privacidad/privacidad.page').then( m => m.PrivacidadPage)
+  },
+  {
+    path: 'privacy-policy',
+    redirectTo: 'privacidad',
+    pathMatch: 'full'
+  },
 ];

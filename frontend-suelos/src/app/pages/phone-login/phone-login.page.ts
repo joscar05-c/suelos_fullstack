@@ -222,4 +222,8 @@ export class PhoneLoginPage implements OnInit, OnDestroy {
     });
     await alert.present();
   }
+
+  goToPrivacy() {
+    this.router.navigate(['/privacidad']);
+  }
 }

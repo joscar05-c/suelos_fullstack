@@ -54,6 +54,16 @@
         {{ loading ? 'Enviando...' : 'Enviar Código' }}
         <ion-spinner *ngIf="loading" name="crescent" class="ml-2"></ion-spinner>
       </ion-button>
+
+      <p class="text-center text-xs text-gray-500 mt-5">
+        Al continuar, aceptas nuestra
+        <button
+          type="button"
+          (click)="goToPrivacy()"
+          class="text-hoja font-bold underline bg-transparent p-0 m-0 border-none cursor-pointer">
+          Política de Privacidad
+        </button>
+      </p>
     </div>
 
     <div *ngIf="step === 'verify'" class="animate-fade-in text-center">
