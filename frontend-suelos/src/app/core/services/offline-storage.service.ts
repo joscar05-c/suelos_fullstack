@@ -23,8 +23,31 @@ export interface LocalCalculo {
 export class OfflineStorageService {
   private readonly CHACRAS_KEY = 'suelos_offline_chacras';
   private readonly CALCULOS_KEY = 'suelos_offline_calculos';
+  private readonly CATALOGOS_KEY = 'suelos_offline_catalogos';
 
   constructor() {}
+
+  // ============================================
+  // GESTIÓN DE CATÁLOGOS DINÁMICOS EN LOCAL
+  // ============================================
+
+  saveCachedCatalogos(catalogos: any): void {
+    try {
+      localStorage.setItem(this.CATALOGOS_KEY, JSON.stringify(catalogos));
+    } catch (e) {
+      console.error('Error al guardar catálogos en caché:', e);
+    }
+  }
+
+  getCachedCatalogos(): any | null {
+    try {
+      const raw = localStorage.getItem(this.CATALOGOS_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) {
+      console.error('Error al leer catálogos de caché:', e);
+      return null;
+    }
+  }
 
   // ============================================
   // GESTIÓN DE CHACRAS EN ALMACENAMIENTO LOCAL

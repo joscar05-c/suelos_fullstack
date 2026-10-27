@@ -20,6 +20,7 @@ import {
   RELACIONES_CATIONICAS,
   NIVELES_CRITICOS_MICRO,
   REQUERIMIENTOS_CULTIVO_CAFE,
+  REQUERIMIENTOS_CULTIVO_TODOS,
   FUENTES_FERTILIZANTES,
 } from '../constants/agronomic-tables.constant';
 
@@ -37,6 +38,20 @@ import {
  * - Soporta cálculo de dosis por hectárea, número de sacos (50 kg) y gramos por planta.
  */
 export class SoilCalculationEngine {
+  private static catalogosDinamicos?: {
+    fuentes?: FuenteFertilizante[];
+    requerimientos?: any[];
+    texturas?: any[];
+    zonas?: any[];
+  };
+
+  /**
+   * Permite inyectar catálogos dinámicos actualizados desde Supabase/LocalStorage
+   */
+  public static setCatalogosDinamicos(catalogos: typeof SoilCalculationEngine.catalogosDinamicos): void {
+    this.catalogosDinamicos = catalogos;
+  }
+
   /**
    * Ejecuta el análisis completo de suelo y balance de fertilización
    */
@@ -120,7 +135,7 @@ export class SoilCalculationEngine {
       cicEfectiva,
     );
 
-    // 14. Balance Nutricional (Interpolación según Meta en qq/ha)
+    // 14. Balance Nutricional (Interpolación según Meta en qq/ha y Cultivo)
     const balanceNutricional = this.calcularBalanceNutricional(
       datos.metaRendimiento,
       nDisponible,
@@ -129,6 +144,7 @@ export class SoilCalculationEngine {
       mgoDisponible,
       sDisponible,
       tieneDatoAzufre,
+      datos.cultivo || 'Cafe',
     );
 
     // 15. Diagnóstico de Micronutrientes (Anexo 10)
@@ -385,8 +401,15 @@ export class SoilCalculationEngine {
     mgoDisponible: number,
     sDisponible: number,
     tieneDatoAzufre: boolean,
+    cultivo: string = 'Cafe',
   ): BalanceNutricional {
-    const list = [...REQUERIMIENTOS_CULTIVO_CAFE].sort((a, b) => a.metaQuintales - b.metaQuintales);
+    const todosReqs = this.catalogosDinamicos?.requerimientos || REQUERIMIENTOS_CULTIVO_TODOS;
+    const reqsCultivo = todosReqs.filter(
+      (r: any) => (r.cultivo || '').toLowerCase() === (cultivo || 'cafe').toLowerCase()
+    );
+    const list = (reqsCultivo.length > 0 ? reqsCultivo : REQUERIMIENTOS_CULTIVO_CAFE)
+      .slice()
+      .sort((a: any, b: any) => a.metaQuintales - b.metaQuintales);
 
     let reqMin = list[0];
     let reqMax = list[list.length - 1];
@@ -937,32 +960,66 @@ export class SoilCalculationEngine {
   // ============================================
 
   public static getTexturas() {
-    return TEXTURAS_SUELO;
+    return this.catalogosDinamicos?.texturas || TEXTURAS_SUELO;
   }
 
   public static getZonas() {
-    return TASAS_MINERALIZACION;
+    return this.catalogosDinamicos?.zonas || TASAS_MINERALIZACION;
+  }
+
+  public static getTodosFertilizantes() {
+    return this.catalogosDinamicos?.fuentes || FUENTES_FERTILIZANTES;
   }
 
   public static getFertilizantesNitrogeno() {
-    return FUENTES_FERTILIZANTES.filter((f) => f.porc_n > 9).sort((a, b) => b.porc_n - a.porc_n);
+    const list = this.getTodosFertilizantes();
+    return list.filter((f) => f.porc_n > 9).sort((a, b) => b.porc_n - a.porc_n);
   }
 
   public static getFertilizantesFosforo() {
-    return FUENTES_FERTILIZANTES.filter((f) => f.porc_p2o5 > 5).sort((a, b) => b.porc_p2o5 - a.porc_p2o5);
+    const list = this.getTodosFertilizantes();
+    return list.filter((f) => f.porc_p2o5 > 5).sort((a, b) => b.porc_p2o5 - a.porc_p2o5);
   }
 
   public static getFertilizantesPotasio() {
-    return FUENTES_FERTILIZANTES.filter((f) => f.porc_k2o > 15).sort((a, b) => b.porc_k2o - a.porc_k2o);
+    const list = this.getTodosFertilizantes();
+    return list.filter((f) => f.porc_k2o > 15).sort((a, b) => b.porc_k2o - a.porc_k2o);
   }
 
   public static getEnmiendas() {
-    return FUENTES_FERTILIZANTES.filter((f) => f.clasificacion === 'ENMIENDA' || f.porc_cao > 20).sort(
+    const list = this.getTodosFertilizantes();
+    return list.filter((f) => f.clasificacion === 'ENMIENDA' || f.porc_cao > 20).sort(
       (a, b) => b.porc_cao - a.porc_cao,
     );
   }
 
-  public static getTodosFertilizantes() {
-    return FUENTES_FERTILIZANTES;
+  public static getCultivos(): { id: string; nombre: string; metas: number[] }[] {
+    const todosReqs = this.catalogosDinamicos?.requerimientos || REQUERIMIENTOS_CULTIVO_TODOS;
+    const map = new Map<string, number[]>();
+    for (const r of todosReqs) {
+      const c = r.cultivo || 'Cafe';
+      if (!map.has(c)) {
+        map.set(c, []);
+      }
+      const metas = map.get(c)!;
+      if (!metas.includes(r.metaQuintales)) {
+        metas.push(r.metaQuintales);
+      }
+    }
+    const result: { id: string; nombre: string; metas: number[] }[] = [];
+    for (const [cultivo, metas] of map.entries()) {
+      const nombreCompleto =
+        cultivo.toLowerCase() === 'cafe'
+          ? 'Café (Coffea arabica)'
+          : cultivo.toLowerCase() === 'cacao'
+          ? 'Cacao (Theobroma cacao)'
+          : cultivo;
+      result.push({
+        id: cultivo,
+        nombre: nombreCompleto,
+        metas: metas.sort((a, b) => a - b),
+      });
+    }
+    return result;
   }
 }
