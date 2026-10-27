@@ -2,8 +2,11 @@
   <ion-toolbar style="--background: var(--color-tierra-base); --color: white;">
     <ion-title class="font-bold tracking-wide text-lg">Mis Parcelas</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="logout()" class="active:opacity-70">
-        <ion-icon name="log-out-outline" slot="icon-only" class="text-white"></ion-icon>
+      <ion-button (click)="goToAdmin()" class="active:opacity-70" title="Panel Agronómico">
+        <ion-icon name="settings-outline" slot="icon-only" class="text-white text-xl"></ion-icon>
+      </ion-button>
+      <ion-button (click)="logout()" class="active:opacity-70" title="Cerrar sesión">
+        <ion-icon name="log-out-outline" slot="icon-only" class="text-white text-xl"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
@@ -24,7 +27,7 @@
     </div>
   </div>
 
-  <div class="px-4 flex gap-3 mb-4 -mt-8 relative z-10">
+  <div class="px-4 flex gap-3 mb-3 -mt-8 relative z-10">
     <button (click)="presentAddChacraAlert()" class="flex-1 bg-hoja text-white font-bold py-4 px-4 rounded-2xl shadow-lg shadow-hoja/30 active:scale-95 transition-all duration-150 flex flex-col items-center justify-center gap-1.5">
       <ion-icon name="add-circle" class="text-3xl"></ion-icon>
       <span class="text-sm">Nueva Parcela</span>
@@ -33,6 +36,21 @@
     <button (click)="goToCalculator()" class="flex-1 bg-white text-tierra-oscura font-bold py-4 px-4 rounded-2xl shadow-lg shadow-black/5 border border-gray-100 active:scale-95 transition-all duration-150 flex flex-col items-center justify-center gap-1.5">
       <ion-icon name="calculator" class="text-3xl text-tierra-base"></ion-icon>
       <span class="text-sm">Calculadora Rápida</span>
+    </button>
+  </div>
+
+  <div class="px-4 mb-4">
+    <button (click)="goToAdmin()" class="w-full bg-white rounded-2xl p-3 border border-amber-100 shadow-sm flex items-center justify-between active:scale-[0.99] transition-all">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-amber-50 text-tierra-base flex items-center justify-center text-xl shrink-0">
+          <ion-icon name="leaf-outline"></ion-icon>
+        </div>
+        <div class="text-left">
+          <h4 class="text-xs font-extrabold text-tierra-oscura">Panel Agronómico</h4>
+          <p class="text-[11px] text-gray-500">Configura cultivos, tablas de extracción y fertilizantes</p>
+        </div>
+      </div>
+      <ion-icon name="chevron-forward-outline" class="text-gray-400 text-lg"></ion-icon>
     </button>
   </div>
 

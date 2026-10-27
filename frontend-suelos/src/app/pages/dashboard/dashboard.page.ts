@@ -24,6 +24,8 @@ import {
   syncOutline,
   checkmarkCircleOutline,
   timeOutline,
+  settingsOutline,
+  chevronForwardOutline,
 } from 'ionicons/icons';
 
 @Component({
@@ -65,6 +67,8 @@ export class DashboardPage implements OnInit {
       syncOutline,
       checkmarkCircleOutline,
       timeOutline,
+      settingsOutline,
+      chevronForwardOutline,
     });
   }
 
@@ -188,6 +192,10 @@ export class DashboardPage implements OnInit {
 
   goToCalculator() {
     this.router.navigate(['/home']);
+  }
+
+  goToAdmin() {
+    this.router.navigate(['/admin']);
   }
 
   async confirmDelete(chacra: Chacra, event: Event) {
