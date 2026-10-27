@@ -7,6 +7,7 @@ import {
   Usuario,
 } from '../../services/firebase-auth.service';
 import { ChacrasService, Chacra } from '../../services/chacras.service';
+import { SyncService } from '../../core/services/sync.service';
 import { addIcons } from 'ionicons';
 import {
   logOutOutline,
@@ -18,6 +19,11 @@ import {
   mapOutline,
   documentText,
   trash,
+  cloudOfflineOutline,
+  cloudUploadOutline,
+  syncOutline,
+  checkmarkCircleOutline,
+  timeOutline,
 } from 'ionicons/icons';
 
 @Component({
@@ -31,10 +37,14 @@ export class DashboardPage implements OnInit {
   usuario: Usuario | null = null;
   chacras: Chacra[] = [];
   loading = true;
+  isOnline = true;
+  isSyncing = false;
+  pendingCount = 0;
 
   constructor(
     private firebaseAuth: FirebaseAuthService,
     private chacrasService: ChacrasService,
+    public syncService: SyncService,
     private router: Router,
     private alertController: AlertController,
     private toastController: ToastController,
@@ -50,10 +60,18 @@ export class DashboardPage implements OnInit {
       mapOutline,
       documentText,
       trash,
+      cloudOfflineOutline,
+      cloudUploadOutline,
+      syncOutline,
+      checkmarkCircleOutline,
+      timeOutline,
     });
   }
 
   ngOnInit() {
+    this.syncService.isOnline$.subscribe((online) => (this.isOnline = online));
+    this.syncService.isSyncing$.subscribe((syncing) => (this.isSyncing = syncing));
+    this.syncService.pendingCount$.subscribe((count) => (this.pendingCount = count));
     this.loadData();
   }
 
@@ -75,6 +93,7 @@ export class DashboardPage implements OnInit {
       next: (chacras) => {
         this.chacras = chacras;
         this.loading = false;
+        this.syncService.refreshPendingCount();
       },
       error: (error) => {
         console.error('Error al cargar chacras:', error);
@@ -82,6 +101,22 @@ export class DashboardPage implements OnInit {
         this.showToast('Error al cargar las chacras', 'danger');
       },
     });
+  }
+
+  async syncNow() {
+    if (!this.isOnline) {
+      this.showToast('No hay conexión a internet para sincronizar', 'warning');
+      return;
+    }
+    const report = await this.syncService.syncAll();
+    if (report.syncedChacras > 0 || report.syncedCalculos > 0) {
+      this.showToast(`Sincronizados: ${report.syncedChacras} parcelas y ${report.syncedCalculos} análisis`, 'success');
+      this.loadData();
+    } else if (report.errors.length > 0) {
+      this.showToast('Hubo errores al sincronizar algunos datos', 'danger');
+    } else {
+      this.showToast('Todos los datos están sincronizados', 'success');
+    }
   }
 
   async presentAddChacraAlert() {
