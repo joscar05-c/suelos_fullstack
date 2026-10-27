@@ -1,7 +1,8 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { environment } from '../../environments/environment';
+import { Injectable, inject } from '@angular/core';
+import { Observable, from, of } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { SupabaseService } from '../core/services/supabase.service';
+import { FirebaseAuthService } from './firebase-auth.service';
 
 export interface Chacra {
   id: number;
@@ -11,7 +12,8 @@ export interface Chacra {
   descripcion?: string;
   totalCalculos?: number;
   ultimoCalculo?: string;
-  usuarioId?: number;
+  usuarioId?: string | number;
+  calculos?: any[];
 }
 
 export interface CreateChacraDto {
@@ -46,38 +48,225 @@ export interface CalculoDetalle {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ChacrasService {
-  private apiUrl = `${environment.apiUrl}/chacras`;
+  private supabase = inject(SupabaseService);
+  private firebaseAuth = inject(FirebaseAuthService);
 
-  constructor(private http: HttpClient) {}
-
+  /**
+   * Obtiene todas las parcelas/chacras del usuario autenticado
+   * Utiliza la vista v_chacras_resumen con total de análisis y última fecha
+   */
   getChacras(): Observable<Chacra[]> {
-    return this.http.get<Chacra[]>(this.apiUrl);
+    const uid = this.firebaseAuth.currentUserUid;
+    if (!uid) {
+      return of([]);
+    }
+
+    return from(
+      this.supabase.client
+        .from('v_chacras_resumen')
+        .select('*')
+        .eq('usuario_id', uid)
+        .order('createdAt', { ascending: false })
+    ).pipe(
+      map(({ data, error }) => {
+        if (error) {
+          console.error('Error al listar chacras desde Supabase:', error);
+          throw error;
+        }
+        return (data || []).map((row: any) => ({
+          id: Number(row.id),
+          nombre: row.nombre,
+          areaHa: String(row.areaHa),
+          ubicacion: row.ubicacion || undefined,
+          descripcion: row.descripcion || undefined,
+          totalCalculos: row.totalCalculos || 0,
+          ultimoCalculo: row.ultimoCalculo || undefined,
+          usuarioId: row.usuario_id,
+        }));
+      })
+    );
   }
 
+  /**
+   * Obtiene los detalles de una chacra específica y sus cálculos
+   */
   getChacra(id: number): Observable<Chacra> {
-    return this.http.get<Chacra>(`${this.apiUrl}/${id}`);
+    return from(
+      this.supabase.client
+        .from('chacras')
+        .select('*, calculos_suelo(*)')
+        .eq('id', id)
+        .single()
+    ).pipe(
+      map(({ data, error }) => {
+        if (error) {
+          console.error(`Error al obtener chacra ${id}:`, error);
+          throw error;
+        }
+        return {
+          id: Number(data.id),
+          nombre: data.nombre,
+          areaHa: String(data.area_ha),
+          ubicacion: data.ubicacion || undefined,
+          descripcion: data.descripcion || undefined,
+          usuarioId: data.usuario_id,
+          calculos: data.calculos_suelo || [],
+        };
+      })
+    );
   }
 
+  /**
+   * Crea una nueva chacra en Supabase vinculada al UID de Firebase
+   */
   createChacra(data: CreateChacraDto): Observable<Chacra> {
-    return this.http.post<Chacra>(this.apiUrl, data);
+    const uid = this.firebaseAuth.currentUserUid;
+    if (!uid) {
+      throw new Error('Usuario no autenticado para crear chacra');
+    }
+
+    return from(
+      this.supabase.client
+        .from('chacras')
+        .insert({
+          usuario_id: uid,
+          nombre: data.nombre,
+          area_ha: data.areaHa,
+          ubicacion: data.ubicacion || null,
+          descripcion: data.descripcion || null,
+        })
+        .select()
+        .single()
+    ).pipe(
+      map(({ data: res, error }) => {
+        if (error) {
+          console.error('Error al crear chacra en Supabase:', error);
+          throw error;
+        }
+        return {
+          id: Number(res.id),
+          nombre: res.nombre,
+          areaHa: String(res.area_ha),
+          ubicacion: res.ubicacion || undefined,
+          descripcion: res.descripcion || undefined,
+          usuarioId: res.usuario_id,
+          totalCalculos: 0,
+        };
+      })
+    );
   }
 
+  /**
+   * Actualiza una chacra existente
+   */
   updateChacra(id: number, data: UpdateChacraDto): Observable<Chacra> {
-    return this.http.put<Chacra>(`${this.apiUrl}/${id}`, data);
+    const updatePayload: any = { updated_at: new Date().toISOString() };
+    if (data.nombre !== undefined) updatePayload.nombre = data.nombre;
+    if (data.areaHa !== undefined) updatePayload.area_ha = data.areaHa;
+    if (data.ubicacion !== undefined) updatePayload.ubicacion = data.ubicacion;
+    if (data.descripcion !== undefined) updatePayload.descripcion = data.descripcion;
+
+    return from(
+      this.supabase.client
+        .from('chacras')
+        .update(updatePayload)
+        .eq('id', id)
+        .select()
+        .single()
+    ).pipe(
+      map(({ data: res, error }) => {
+        if (error) {
+          console.error(`Error al actualizar chacra ${id}:`, error);
+          throw error;
+        }
+        return {
+          id: Number(res.id),
+          nombre: res.nombre,
+          areaHa: String(res.area_ha),
+          ubicacion: res.ubicacion || undefined,
+          descripcion: res.descripcion || undefined,
+          usuarioId: res.usuario_id,
+        };
+      })
+    );
   }
 
+  /**
+   * Elimina una chacra (con borrado en cascada de sus cálculos en Supabase)
+   */
   deleteChacra(id: number): Observable<{ message: string }> {
-    return this.http.delete<{ message: string }>(`${this.apiUrl}/${id}`);
+    return from(
+      this.supabase.client
+        .from('chacras')
+        .delete()
+        .eq('id', id)
+    ).pipe(
+      map(({ error }) => {
+        if (error) {
+          console.error(`Error al eliminar chacra ${id}:`, error);
+          throw error;
+        }
+        return { message: 'Chacra eliminada correctamente' };
+      })
+    );
   }
 
+  /**
+   * Obtiene la lista resumida de análisis realizados en una chacra
+   */
   getCalculos(chacraId: number): Observable<CalculoResumen[]> {
-    return this.http.get<CalculoResumen[]>(`${this.apiUrl}/${chacraId}/calculos`);
+    return from(
+      this.supabase.client
+        .from('calculos_suelo')
+        .select('id, created_at, nombre_muestra, datos_entrada, resultados')
+        .eq('chacra_id', chacraId)
+        .order('created_at', { ascending: false })
+    ).pipe(
+      map(({ data, error }) => {
+        if (error) {
+          console.error(`Error al obtener cálculos de chacra ${chacraId}:`, error);
+          throw error;
+        }
+        return (data || []).map((row: any) => ({
+          id: Number(row.id),
+          fecha: row.created_at,
+          nombreMuestra: row.nombre_muestra,
+          metaRendimiento: row.datos_entrada?.metaRendimiento,
+          ph: row.datos_entrada?.ph,
+          alertasCount: row.resultados?.alertas?.length || 0,
+        }));
+      })
+    );
   }
 
+  /**
+   * Obtiene los datos completos y resultados de un cálculo específico
+   */
   getCalculo(chacraId: number, calculoId: number): Observable<CalculoDetalle> {
-    return this.http.get<CalculoDetalle>(`${this.apiUrl}/${chacraId}/calculos/${calculoId}`);
+    return from(
+      this.supabase.client
+        .from('calculos_suelo')
+        .select('*')
+        .eq('id', calculoId)
+        .eq('chacra_id', chacraId)
+        .single()
+    ).pipe(
+      map(({ data, error }) => {
+        if (error) {
+          console.error(`Error al obtener cálculo ${calculoId}:`, error);
+          throw error;
+        }
+        return {
+          id: Number(data.id),
+          fecha: data.created_at,
+          nombreMuestra: data.nombre_muestra,
+          datosEntrada: data.datos_entrada,
+          resultados: data.resultados,
+        };
+      })
+    );
   }
 }

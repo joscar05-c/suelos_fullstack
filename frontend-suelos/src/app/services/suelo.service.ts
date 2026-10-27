@@ -1,9 +1,10 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { Observable, of, from } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { SolicitudCalculo, RespuestaCalculo } from '../interfaces/suelo.interface';
 import { SoilCalculationEngine } from '../core/domain/engine/soil-calculation.engine';
-import { environment } from '../../environments/environment';
+import { SupabaseService } from '../core/services/supabase.service';
+import { FirebaseAuthService } from './firebase-auth.service';
 
 export interface CalcularYGuardarDto {
   chacraId: number;
@@ -21,10 +22,8 @@ export interface CalcularYGuardarResponse {
   providedIn: 'root',
 })
 export class SueloService {
-  private http = inject(HttpClient);
-
-  // URL base mantenida temporalmente mientras se completa la migración a Supabase
-  private apiUrl = `${environment.apiUrl}/calculo-suelo`;
+  private supabase = inject(SupabaseService);
+  private firebaseAuth = inject(FirebaseAuthService);
 
   /**
    * ⚡ CÁLCULO AGRONÓMICO OFFLINE / INSTANTÁNEO
@@ -32,26 +31,51 @@ export class SueloService {
    * sin latencia ni dependencia de servidor o red.
    */
   calcularNutrientes(datos: SolicitudCalculo): Observable<RespuestaCalculo> {
-    try {
-      const resultado = SoilCalculationEngine.calcular(datos as any);
-      return of(resultado as unknown as RespuestaCalculo);
-    } catch (error) {
-      console.warn('Fallo en motor local, intentando fallback de red si estuviera disponible:', error);
-      return this.http.post<RespuestaCalculo>(`${this.apiUrl}/calcular-nutrientes`, datos);
-    }
+    const resultado = SoilCalculationEngine.calcular(datos as any);
+    return of(resultado as unknown as RespuestaCalculo);
   }
 
   /**
-   * Método de guardado en Chacra
-   * (En el Paso 2/3 se conectará al repositorio local Offline-First y a Supabase)
+   * Guarda el cálculo realizado directamente en Supabase vinculado a la chacra
    */
   calcularYGuardar(
     chacraId: number,
     data: { nombreMuestra?: string; datos: SolicitudCalculo },
   ): Observable<CalcularYGuardarResponse> {
-    return this.http.post<CalcularYGuardarResponse>(
-      `${environment.apiUrl}/chacras/${chacraId}/calculos`,
-      data,
+    const uid = this.firebaseAuth.currentUserUid;
+    if (!uid) {
+      throw new Error('Usuario no autenticado para guardar cálculo');
+    }
+
+    const resultado = SoilCalculationEngine.calcular(data.datos as any);
+    const nombreMuestra =
+      data.nombreMuestra ||
+      `Análisis ${new Date().toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' })}`;
+
+    return from(
+      this.supabase.client
+        .from('calculos_suelo')
+        .insert({
+          chacra_id: chacraId,
+          usuario_id: uid,
+          nombre_muestra: nombreMuestra,
+          datos_entrada: data.datos,
+          resultados: resultado,
+        })
+        .select('id')
+        .single()
+    ).pipe(
+      map(({ data: row, error }) => {
+        if (error) {
+          console.error('Error al guardar cálculo en Supabase:', error);
+          throw error;
+        }
+        return {
+          calculoId: Number(row.id),
+          chacraNombre: '',
+          resultado: resultado as unknown as RespuestaCalculo,
+        };
+      })
     );
   }
 
