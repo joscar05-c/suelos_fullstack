@@ -1,5 +1,11 @@
 <ion-header class="ion-no-border" [translucent]="true">
   <ion-toolbar style="--background: var(--color-tierra-base); --color: white">
+    <ion-buttons slot="start">
+      <ion-button (click)="volverAtras()" class="active:opacity-70" title="Volver">
+        <ion-icon name="arrow-back-outline" slot="icon-only" class="text-white"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
     <ion-title class="font-bold tracking-wide text-lg">
       Calculadora de Suelos
     </ion-title>

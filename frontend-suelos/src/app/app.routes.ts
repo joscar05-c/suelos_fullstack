@@ -1,15 +1,24 @@
 import { Routes } from '@angular/router';
 import { firebaseAuthGuard } from './guards/firebase-auth.guard';
+import { adminGuard } from './guards/admin.guard';
 
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'phone-login',
+    redirectTo: 'landing',
     pathMatch: 'full',
+  },
+  {
+    path: 'landing',
+    loadComponent: () => import('./pages/landing/landing.page').then( m => m.LandingPage)
   },
   {
     path: 'phone-login',
     loadComponent: () => import('./pages/phone-login/phone-login.page').then( m => m.PhoneLoginPage)
+  },
+  {
+    path: 'home',
+    loadComponent: () => import('./home/home.page').then( m => m.HomePage)
   },
   {
     path: 'dashboard',
@@ -27,13 +36,8 @@ export const routes: Routes = [
     canActivate: [firebaseAuthGuard]
   },
   {
-    path: 'home',
-    loadComponent: () => import('./home/home.page').then( m => m.HomePage),
-    canActivate: [firebaseAuthGuard]
-  },
-  {
     path: 'admin',
     loadComponent: () => import('./pages/admin/admin.page').then( m => m.AdminPage),
-    canActivate: [firebaseAuthGuard]
+    canActivate: [firebaseAuthGuard, adminGuard]
   },
 ];

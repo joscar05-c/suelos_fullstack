@@ -436,6 +436,14 @@ export class HomePage implements OnInit {
     });
   }
 
+  volverAtras() {
+    if (this.isAuthenticated()) {
+      this.router.navigate(['/dashboard']);
+    } else {
+      this.router.navigate(['/landing']);
+    }
+  }
+
   goToLogin() {
     this.router.navigate(['/phone-login']);
   }

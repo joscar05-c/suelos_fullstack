@@ -2,9 +2,11 @@
   <ion-toolbar style="--background: var(--color-tierra-base); --color: white;">
     <ion-title class="font-bold tracking-wide text-lg">Mis Parcelas</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="goToAdmin()" class="active:opacity-70" title="Panel Agronómico">
-        <ion-icon name="settings-outline" slot="icon-only" class="text-white text-xl"></ion-icon>
-      </ion-button>
+      @if (isAdmin) {
+        <ion-button (click)="goToAdmin()" class="active:opacity-70" title="Panel Agronómico">
+          <ion-icon name="settings-outline" slot="icon-only" class="text-white text-xl"></ion-icon>
+        </ion-button>
+      }
       <ion-button (click)="logout()" class="active:opacity-70" title="Cerrar sesión">
         <ion-icon name="log-out-outline" slot="icon-only" class="text-white text-xl"></ion-icon>
       </ion-button>
@@ -39,20 +41,22 @@
     </button>
   </div>
 
-  <div class="px-4 mb-4">
-    <button (click)="goToAdmin()" class="w-full bg-white rounded-2xl p-3 border border-amber-100 shadow-sm flex items-center justify-between active:scale-[0.99] transition-all">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-amber-50 text-tierra-base flex items-center justify-center text-xl shrink-0">
-          <ion-icon name="leaf-outline"></ion-icon>
+  @if (isAdmin) {
+    <div class="px-4 mb-4">
+      <button (click)="goToAdmin()" class="w-full bg-white rounded-2xl p-3 border border-amber-100 shadow-sm flex items-center justify-between active:scale-[0.99] transition-all">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-amber-50 text-tierra-base flex items-center justify-center text-xl shrink-0">
+            <ion-icon name="leaf-outline"></ion-icon>
+          </div>
+          <div class="text-left">
+            <h4 class="text-xs font-extrabold text-tierra-oscura">Panel Agronómico</h4>
+            <p class="text-[11px] text-gray-500">Configura cultivos, tablas de extracción y fertilizantes</p>
+          </div>
         </div>
-        <div class="text-left">
-          <h4 class="text-xs font-extrabold text-tierra-oscura">Panel Agronómico</h4>
-          <p class="text-[11px] text-gray-500">Configura cultivos, tablas de extracción y fertilizantes</p>
-        </div>
-      </div>
-      <ion-icon name="chevron-forward-outline" class="text-gray-400 text-lg"></ion-icon>
-    </button>
-  </div>
+        <ion-icon name="chevron-forward-outline" class="text-gray-400 text-lg"></ion-icon>
+      </button>
+    </div>
+  }
 
   @if (!isOnline) {
     <div class="mx-4 mb-4 p-3 bg-amber-50 border border-amber-200/80 rounded-2xl flex items-center justify-between text-amber-800 text-xs font-semibold shadow-sm animate-fade-in">

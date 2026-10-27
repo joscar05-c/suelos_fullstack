@@ -198,6 +198,10 @@ export class DashboardPage implements OnInit {
     this.router.navigate(['/admin']);
   }
 
+  get isAdmin(): boolean {
+    return this.usuario?.rol === 'ADMIN';
+  }
+
   async confirmDelete(chacra: Chacra, event: Event) {
     event.stopPropagation();
     const alert = await this.alertController.create({

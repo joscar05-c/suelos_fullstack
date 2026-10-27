@@ -19,6 +19,7 @@ export interface Usuario {
   email?: string;
   nombre?: string;
   activo: boolean;
+  rol?: 'ADMIN' | 'PRODUCTOR' | 'TECNICO' | string;
 }
 
 const firebaseConfig = environment.firebase;
@@ -230,18 +231,34 @@ export class FirebaseAuthService {
         user.email
       );
 
-      this.appUserSubject.next({
+      const appUser: Usuario = {
         id: userData.id,
         firebaseUid: userData.firebase_uid,
         telefono: userData.telefono || undefined,
         email: userData.email || undefined,
         nombre: userData.nombre || 'Agricultor',
-        activo: userData.activo
-      });
-      console.log('✅ Perfil sincronizado con Supabase:', userData);
+        activo: userData.activo,
+        rol: userData.rol || 'PRODUCTOR',
+      };
+
+      try {
+        localStorage.setItem('suelos_user_profile', JSON.stringify(appUser));
+      } catch (_) {}
+
+      this.appUserSubject.next(appUser);
+      console.log('✅ Perfil sincronizado con Supabase:', appUser);
     } catch (error) {
       console.error('⚠️ Error al sincronizar perfil con Supabase:', error);
-      // Fallback para mantener experiencia de usuario activa
+      // Fallback para mantener experiencia de usuario activa sin conexión
+      try {
+        const cached = localStorage.getItem('suelos_user_profile');
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          this.appUserSubject.next(parsed);
+          return;
+        }
+      } catch (_) {}
+
       const user = this.auth.currentUser;
       if (user) {
         this.appUserSubject.next({
@@ -250,7 +267,8 @@ export class FirebaseAuthService {
           telefono: user.phoneNumber || undefined,
           email: user.email || undefined,
           nombre: user.displayName || user.phoneNumber || 'Agricultor',
-          activo: true
+          activo: true,
+          rol: 'PRODUCTOR',
         });
       }
     }
@@ -273,6 +291,9 @@ export class FirebaseAuthService {
   async logout(): Promise<void> {
     // Limpiar ReCAPTCHA al cerrar sesión
     this.clearRecaptcha();
+    try {
+      localStorage.removeItem('suelos_user_profile');
+    } catch (_) {}
 
     await this.auth.signOut();
     console.log('👋 Sesión cerrada');
@@ -319,5 +340,12 @@ export class FirebaseAuthService {
    */
   get currentAppUser(): Usuario | null {
     return this.appUserSubject.value;
+  }
+
+  /**
+   * Verificar si el usuario actual tiene rol de Administrador
+   */
+  get isAdmin(): boolean {
+    return this.appUserSubject.value?.rol === 'ADMIN';
   }
 }
