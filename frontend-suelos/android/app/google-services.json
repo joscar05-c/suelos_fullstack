@@ -9,14 +9,55 @@
       "client_info": {
         "mobilesdk_app_id": "1:161685258270:android:987d705a3c8918ea70ae0f",
         "android_client_info": {
-          "package_name": "com.suelos.app",
-          "certificate_hash": [
-            "F6FAA6AB7FB46374D33AC17FF6E19D84424B2243",
-            "3217C9F7627627BB11938FC2C90E94E299A4172EF8907B82C3FB4ED54172C6B7"
-          ]
+          "package_name": "com.suelos.app"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "161685258270-0r1k7hbl7reihiaf5s9dkum2ji8in6on.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.suelos.app",
+            "certificate_hash": "23dfa4463ea5dac25026d2a2472bb123a97d42a0"
+          }
+        },
+        {
+          "client_id": "161685258270-1ktg7h3csqq408vcbl5jadj423jmc4sk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.suelos.app",
+            "certificate_hash": "c0d79c63fef51d1a4541e70b602940e7967288cd"
+          }
+        },
+        {
+          "client_id": "161685258270-6kk8mf12p34idaodgprt9jib2orf43vv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.suelos.app",
+            "certificate_hash": "ba3ddde92e6e0fc88e0be271f65183e3b3f4116e"
+          }
+        },
+        {
+          "client_id": "161685258270-p7bmn3t7h2a509dtvbkonnrnl2akrt0e.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.suelos.app",
+            "certificate_hash": "f6faa6ab7fb46374d33ac17ff6e19d84424b2243"
+          }
+        },
+        {
+          "client_id": "161685258270-q55iaiukj3ptbktrer19o3li8gr85cfd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.suelos.app",
+            "certificate_hash": "b724965f4803a886fc7753abe88c90d24ec783dd"
+          }
+        },
+        {
+          "client_id": "161685258270-dn61pa1pl5kiqq0m8ab1ls43tuprn0h2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAhzYbxa14eZR1l7ZF6sHSPPVdciC4U6Hs"
@@ -24,7 +65,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "161685258270-dn61pa1pl5kiqq0m8ab1ls43tuprn0h2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
