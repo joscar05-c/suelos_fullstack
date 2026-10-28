@@ -45,8 +45,8 @@
     <div class="px-4 mb-4">
       <button (click)="goToAdmin()" class="w-full bg-white rounded-2xl p-3 border border-amber-100 shadow-sm flex items-center justify-between active:scale-[0.99] transition-all">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-amber-50 text-tierra-base flex items-center justify-center text-xl shrink-0">
-            <ion-icon name="leaf-outline"></ion-icon>
+          <div class="w-10 h-10 rounded-xl bg-amber-50/80 p-1.5 flex items-center justify-center shrink-0">
+            <img src="assets/icon/icon.png" alt="Panel Agronómico" class="w-full h-full object-contain" />
           </div>
           <div class="text-left">
             <h4 class="text-xs font-extrabold text-tierra-oscura">Panel Agronómico</h4>
@@ -103,8 +103,8 @@
 
   @if (!loading && chacras.length === 0) {
     <div class="mx-4 bg-white rounded-[2rem] p-8 text-center shadow-[0_10px_30px_rgba(62,39,35,0.05)] border border-gray-100 animate-fade-in mt-4">
-      <div class="w-24 h-24 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-5 border-4 border-white shadow-sm">
-        <ion-icon name="leaf" class="text-5xl text-hoja opacity-60"></ion-icon>
+      <div class="w-24 h-24 bg-green-50/80 rounded-full flex items-center justify-center mx-auto mb-5 border-4 border-white shadow-sm p-4">
+        <img src="assets/icon/icon.png" alt="Edafix Perú" class="w-full h-full object-contain" />
       </div>
       <h3 class="text-xl font-extrabold text-tierra-oscura mb-2">Aún no tienes terrenos</h3>
       <p class="text-gray-500 text-sm leading-relaxed mb-6">

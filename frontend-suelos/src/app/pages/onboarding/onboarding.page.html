@@ -5,9 +5,7 @@
     <!-- Cabecera con botón Saltar -->
     <div class="flex items-center justify-between pt-2">
       <div class="flex items-center gap-2">
-        <div class="w-8 h-8 rounded-xl bg-hoja flex items-center justify-center text-white">
-          <ion-icon name="leaf-outline" class="text-lg"></ion-icon>
-        </div>
+        <img src="assets/icon/icon.png" alt="Edafix Perú" class="w-8 h-8 rounded-xl object-contain shadow-sm" />
         <span class="font-black text-sm text-tierra-oscura">Edafix Perú</span>
       </div>
 
@@ -28,8 +26,12 @@
             <!-- Ícono Ilustrativo Grande -->
             <div class="relative w-32 h-32 mx-auto flex items-center justify-center">
               <div class="absolute inset-0 rounded-full {{ p.fondoIcono }} opacity-60 animate-pulse"></div>
-              <div class="relative w-24 h-24 rounded-full {{ p.fondoIcono }} flex items-center justify-center shadow-inner">
-                <ion-icon [name]="p.icono" class="text-5xl {{ p.colorIcono }}"></ion-icon>
+              <div class="relative w-24 h-24 rounded-full {{ p.fondoIcono }} flex items-center justify-center shadow-inner overflow-hidden">
+                @if (p.numero === 1) {
+                  <img src="assets/icon/icon.png" alt="Edafix Perú" class="w-20 h-20 object-contain drop-shadow" />
+                } @else {
+                  <ion-icon [name]="p.icono" class="text-5xl {{ p.colorIcono }}"></ion-icon>
+                }
               </div>
             </div>
 
