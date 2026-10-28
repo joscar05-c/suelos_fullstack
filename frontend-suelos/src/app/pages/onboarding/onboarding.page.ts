@@ -28,7 +28,7 @@ export class OnboardingPage {
   pasos = [
     {
       numero: 1,
-      etiqueta: 'BIENVENIDO A AGROSUELOS',
+      etiqueta: 'BIENVENIDO A EDAFIX PERÚ',
       titulo: 'Diagnóstico Agronómico Certificado',
       descripcion:
         'Interpreta tus análisis de laboratorio al instante y calcula el balance nutricional óptimo para Café, Cacao y tus cultivos basado en metodologías UNALM y JNC/INIA.',
