@@ -29,9 +29,9 @@ export class OnboardingPage {
     {
       numero: 1,
       etiqueta: 'BIENVENIDO A EDAFIX PERÚ',
-      titulo: 'Diagnóstico Agronómico Certificado',
+      titulo: 'Diagnóstico Agronómico Preciso',
       descripcion:
-        'Interpreta tus análisis de laboratorio al instante y calcula el balance nutricional óptimo para Café, Cacao y tus cultivos basado en metodologías UNALM y JNC/INIA.',
+        'Interpreta tus análisis de laboratorio al instante y calcula el balance nutricional óptimo para Café, Cacao y tus cultivos basado en metodologías agronómicas especializadas.',
       icono: 'leaf-outline',
       colorIcono: 'text-hoja',
       fondoIcono: 'bg-green-100',
